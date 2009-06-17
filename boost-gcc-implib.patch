@@ -1,0 +1,48 @@
+--- ./tools/build/v2/tools/gcc.jam.x	2009-05-28 09:26:23.000000000 +0200
++++ ./tools/build/v2/tools/gcc.jam	2009-05-28 09:28:46.000000000 +0200
+@@ -501,34 +501,17 @@
+     }
+ }
+ 
+-.IMPLIB-COMMAND = ;
+-if [ os.on-windows ]
+-{
+-    .IMPLIB-COMMAND = "-Wl,--out-implib," ;
+-    generators.register
+-        [ new gcc-linking-generator gcc.link
+-            : OBJ SEARCHED_LIB STATIC_LIB IMPORT_LIB
+-            : EXE
+-            : <toolset>gcc ] ;
+-    generators.register
+-        [ new gcc-linking-generator gcc.link.dll
+-            : OBJ SEARCHED_LIB STATIC_LIB IMPORT_LIB
+-            : IMPORT_LIB SHARED_LIB
+-            : <toolset>gcc ] ;
+-}
+-else
+-{
+-    generators.register
+-        [ new gcc-linking-generator gcc.link
+-            : LIB OBJ
+-            : EXE
+-            : <toolset>gcc ] ;
+-    generators.register
+-        [ new gcc-linking-generator gcc.link.dll
+-            : LIB OBJ
+-            : SHARED_LIB
+-            : <toolset>gcc ] ;
+-}
++.IMPLIB-COMMAND = "-Wl,--out-implib," ;
++generators.register
++    [ new gcc-linking-generator gcc.link
++        : OBJ SEARCHED_LIB STATIC_LIB IMPORT_LIB
++        : EXE
++        : <toolset>gcc ] ;
++generators.register
++    [ new gcc-linking-generator gcc.link.dll
++        : OBJ SEARCHED_LIB STATIC_LIB IMPORT_LIB
++        : IMPORT_LIB SHARED_LIB
++        : <toolset>gcc ] ;
+ 
+ # Declare flags for linking.
+ # First, the common flags.

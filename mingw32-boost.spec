@@ -4,11 +4,11 @@
 %global __find_requires %{_mingw32_findrequires}
 %global __find_provides %{_mingw32_findprovides}
 
-%global sonamever 4
+%global sonamever 5
 
 %global name1 boost
 %global vermajor 1
-%global verminor 37
+%global verminor 39
 %global verrelease 0
 
 %global verdot %{vermajor}.%{verminor}.%{verrelease}
@@ -16,23 +16,21 @@
 
 Name:           mingw32-%{name1}
 Version:        %{verdot}
-Release:        4%{?dist}
+Release:        1%{?dist}
 Summary:        MinGW Windows port of Boost C++ Libraries
 
 License:        Boost
 Group:          Development/Libraries
 URL:            http://www.boost.org/
-Source0:        http://downloads.sourceforge.net/boost/%{name1}_%{verunderscore}.tar.bz2
+Source0:        http://surfnet.dl.sourceforge.net/sourceforge/%{name1}/%{name1}_%{verunderscore}.tar.bz2
 BuildRoot:      %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 
-Patch0:  boost-configure.patch
-Patch2:  boost-run-tests.patch
-Patch3:  boost-gcc43.patch
-Patch5:  boost-function_template.patch
-Patch6:  boost-unneccessary_iostreams.patch
-Patch7:  boost-1_37_0-smp.patch
-Patch8:  boost-bitset.patch
-Patch9:  boost-gcc-implib.patch
+Patch0: boost-version-override.patch
+Patch2: boost-run-tests.patch
+Patch3: boost-soname.patch
+Patch4: boost-unneccessary_iostreams.patch
+Patch5: boost-bitset.patch
+Patch6: boost-function_template.patch
 Patch10: boost-regexdll.patch
 
 BuildArch:      noarch
@@ -75,12 +73,10 @@ Static version of the MinGW Windows Boost C++ library.
 %setup -q -n %{name1}_%{verunderscore}
 %patch0 -p0
 %patch2 -p0
-%patch3 -p1
+sed 's/_FEDORA_SONAME/%{sonamever}/' %{PATCH3} | %{__patch} -p0 --fuzz=0
+%patch4 -p0
 %patch5 -p0
 %patch6 -p0
-sed 's/!!!SMP_FLAGS!!!/%{?_smp_mflags}/' %{PATCH7} | %{__patch} -p1 --fuzz=0
-%patch8 -p1
-%patch9 -p0
 %patch10 -p0
 
 %build
@@ -105,19 +101,18 @@ PTW32_INCLUDE=/usr/i686-pc-mingw32/sys-root/mingw/include
 PTW32_LIB=/usr/i686-pc-mingw32/sys-root/mingw/lib
 export EXPAT_INCLUDE EXPAT_LIBPATH PTW32_INCLUDE PTW32_LIB
 
-./configure $BUILD_FLAGS $PYTHON_FLAGS $REGEX_FLAGS
+./bootstrap.sh $BUILD_FLAGS $PYTHON_FLAGS $REGEX_FLAGS
 
 # Make it use the cross-compiler instead of gcc.
-rm user-config.jam
 echo "using gcc : : %{_mingw32_cxx}" > user-config.jam
 echo "        : # options" >> user-config.jam
 echo "          <rc>%{_mingw32_windres}" >> user-config.jam
 echo "          <archiver>%{_mingw32_ar}" >> user-config.jam
 echo "        ;" >> user-config.jam
 
-perl -i -pe 's/^BJAM_CONFIG=(.*)$/BJAM_CONFIG=\1 link=static,shared target-os=windows/' Makefile
-
-make %{?_smp_mflags} all
+BUILD_VARIANTS="variant=release threading=single,multi debug-symbols=on link=static,shared target-os=windows"
+BUILD_FLAGS="-d2 --layout=system --user-config=user-config.jam $BUILD_VARIANTS"
+$BJAM $BUILD_FLAGS %{?_smp_mflags} stage
 
 
 %install
@@ -284,6 +279,9 @@ rm -rf $RPM_BUILD_ROOT
 
 
 %changelog
+* Thu Jun 18 2009 Thomas Sailer <t.sailer@alumni.ethz.ch> - 1.39.0-1
+- update to 1.39.0
+
 * Thu May 28 2009 Thomas Sailer <t.sailer@alumni.ethz.ch> - 1.37.0-4
 - use boost buildsystem to build DLLs
 

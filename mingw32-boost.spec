@@ -3,6 +3,7 @@
 %global _use_internal_dependency_generator 0
 %global __find_requires %{_mingw32_findrequires}
 %global __find_provides %{_mingw32_findprovides}
+%define __debug_install_post %{_mingw32_debug_install_post}
 
 %global sonamever 5
 
@@ -16,7 +17,7 @@
 
 Name:           mingw32-%{name1}
 Version:        %{verdot}
-Release:        1%{?dist}
+Release:        2%{?dist}
 Summary:        MinGW Windows port of Boost C++ Libraries
 
 License:        Boost
@@ -36,7 +37,7 @@ Patch10: boost-regexdll.patch
 BuildArch:      noarch
 
 BuildRequires:  file
-BuildRequires:  mingw32-filesystem >= 30
+BuildRequires:  mingw32-filesystem >= 52
 BuildRequires:  mingw32-gcc
 BuildRequires:  mingw32-gcc-c++
 BuildRequires:  mingw32-binutils
@@ -68,6 +69,7 @@ Group:          Development/Libraries
 Static version of the MinGW Windows Boost C++ library.
 
 
+%{_mingw32_debug_package}
 
 %prep
 %setup -q -n %{name1}_%{verunderscore}
@@ -279,6 +281,9 @@ rm -rf $RPM_BUILD_ROOT
 
 
 %changelog
+* Mon Jun 22 2009 Thomas Sailer <t.sailer@alumni.ethz.ch> - 1.39.0-2
+- add debuginfo packages
+
 * Thu Jun 18 2009 Thomas Sailer <t.sailer@alumni.ethz.ch> - 1.39.0-1
 - update to 1.39.0
 

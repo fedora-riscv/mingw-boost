@@ -30,6 +30,7 @@ Patch1:         boost-graph-compile.patch
 
 BuildArch:      noarch
 
+BuildRequires:  cmake
 BuildRequires:  file
 BuildRequires:  mingw32-filesystem >= 52
 BuildRequires:  mingw32-gcc

@@ -214,6 +214,8 @@ rm -rf $RPM_BUILD_ROOT
 %{_mingw32_libdir}/libboost_wserialization-gcc44-mt-1_41.dll.a
 %{_mingw32_bindir}/boost_wserialization-gcc44-mt-d-1_41.dll
 %{_mingw32_libdir}/libboost_wserialization-gcc44-mt-d-1_41.dll.a
+%{_mingw32_datadir}/%{name1}-%{version}
+%{_mingw32_datadir}/cmake/%{name1}/BoostConfig*.cmake
 
 %files static
 %defattr(-,root,root,-)

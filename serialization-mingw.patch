@@ -1,0 +1,44 @@
+Index: libs/serialization/src/basic_serializer_map.cpp
+===================================================================
+--- libs/serialization/src/basic_serializer_map.cpp	(revision 63281)
++++ libs/serialization/src/basic_serializer_map.cpp	(working copy)
+@@ -16,6 +16,7 @@
+ #include <utility>
+ 
+ #define BOOST_ARCHIVE_SOURCE
++#define BOOST_SERIALIZATION_SOURCE
+ #include <boost/archive/archive_exception.hpp>
+ #include <boost/serialization/throw_exception.hpp>
+ 
+Index: libs/serialization/src/shared_ptr_helper.cpp
+===================================================================
+--- libs/serialization/src/shared_ptr_helper.cpp	(revision 63281)
++++ libs/serialization/src/shared_ptr_helper.cpp	(working copy)
+@@ -19,6 +19,7 @@
+ #include <cstddef> // NULL
+ 
+ #define BOOST_ARCHIVE_SOURCE
++#define BOOST_SERIALIZATION_SOURCE
+ 
+ #include <boost/serialization/throw_exception.hpp>
+ #include <boost/serialization/void_cast.hpp>
+--- libs/serialization/src/basic_iarchive.cpp.xx	2010-11-18 19:18:45.000000000 +0100
++++ libs/serialization/src/basic_iarchive.cpp	2010-11-18 19:18:56.000000000 +0100
+@@ -29,6 +29,7 @@
+ #include <boost/serialization/tracking.hpp>
+ 
+ #define BOOST_ARCHIVE_SOURCE
++#define BOOST_SERIALIZATION_SOURCE
+ 
+ #include <boost/archive/archive_exception.hpp>
+ 
+--- libs/serialization/src/basic_oarchive.cpp.x	2010-11-18 19:20:38.000000000 +0100
++++ libs/serialization/src/basic_oarchive.cpp	2010-11-18 19:20:55.000000000 +0100
+@@ -21,6 +21,7 @@
+ // including this here to work around an ICC in intel 7.0
+ // normally this would be part of basic_oarchive.hpp below.
+ #define BOOST_ARCHIVE_SOURCE
++#define BOOST_SERIALIZATION_SOURCE
+ 
+ #include <boost/archive/detail/decl.hpp>
+ #include <boost/archive/basic_archive.hpp>

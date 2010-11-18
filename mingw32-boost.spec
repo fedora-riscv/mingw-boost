@@ -8,18 +8,26 @@
 %global name1 boost
 
 Name:           mingw32-%{name1}
-Version:        1.41.0
-Release:        2%{?dist}
+Version:        1.44.0
+%global pristine_version 1_44_0
+Release:        1%{?dist}
 Summary:        MinGW Windows port of Boost C++ Libraries
 
 License:        Boost
 Group:          Development/Libraries
-URL:            http://sodium.resophonic.com/boost-cmake/%{version}.cmake0/
+# The CMake build framework (set of CMakeLists.txt and module.cmake files) is
+# added on top of the official Boost release (http://www.boost.org), thanks to
+# a dedicated patch. That CMake framework (and patch) is hosted and maintained
+# on Gitorious, for now in the following Git repository:
+# http://gitorious.org/boost/denisarnauds-zeuners-boost-cmake
+%global full_pristine_version %{name1}_%{pristine_version}
+%global full_cmake_version %{name1}-%{version}.cmake
+URL:            http://www.boost.org
 %global full_version %{name1}-%{version}.cmake0
-Source:         %{full_version}.tar.bz2
+Source:         http://downloads.sourceforge.net/%{name1}/%{full_pristine_version}.tar.bz2
 BuildRoot:      %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 
-Patch0:         boost-cmake-soname.patch
+Patch0:         cmakeify_boost_1440.patch
 Patch1:         boost-graph-compile.patch
 
 %if 0%{?fedora} >= 13
@@ -67,37 +75,37 @@ Static version of the MinGW Windows Boost C++ library.
 %{_mingw32_debug_package}
 
 %prep
-%setup -q -n %{full_version}
+%setup -q -n %{full_pristine_version}
 
-sed 's/_FEDORA_SONAME/%{sonamever}/' %{PATCH0} | %{__patch} -p0 --fuzz=0
-%patch1 -p0
+# CMake framework (CMakeLists.txt, *.cmake and documentation files)
+%patch0 -p1
 
 %build
-%{__mkdir_p} build
-cd build
-
 # Support for building tests.
-%define boost_testflags -DBUILD_TESTS="NONE"
+%global boost_testflags -DBUILD_TESTS="NONE"
 
-%_mingw32_cmake -DCMAKE_BUILD_TYPE=RelWithDebInfo %{boost_testflags} \
-                -DENABLE_SINGLE_THREADED=YES -DINSTALL_VERSIONED=OFF ..
-make VERBOSE=1 %{?_smp_mflags}
 cd %{_builddir}/%{full_version}
-
+( echo ============================= build serial ==================
+  mkdir serial
+  cd serial
+  %_mingw32_cmake -DCMAKE_BUILD_TYPE=RelWithDebInfo %{boost_testflags} \
+                  -DENABLE_SINGLE_THREADED=YES -DINSTALL_VERSIONED=OFF \
+                  -DWITH_MPI=OFF ..
+  make VERBOSE=1 %{?_smp_mflags}
+)
 
 %install
 %{__rm} -rf $RPM_BUILD_ROOT
 
-cd %{_builddir}/%{full_version}/build
-DESTDIR=$RPM_BUILD_ROOT make VERBOSE=1 install
-
-cd %{_builddir}/%{full_version}
+echo ============================= install serial ==================
+DESTDIR=$RPM_BUILD_ROOT make -C serial VERBOSE=1 install
+# Kill any debug library versions that may show up un-invited.
+%{__rm} -f $RPM_BUILD_ROOT/%{_libdir}/*-d.*
+# Remove cmake configuration files used to build the Boost libraries
+find $RPM_BUILD_ROOT/%{_mingw32_libdir} -name '*.cmake' -exec %{__rm} -f {} \;
 
 # Remove scripts used to generate include files
 find $RPM_BUILD_ROOT%{_mingw32_includedir}/ \( -name '*.pl' -o -name '*.sh' \) -exec %{__rm} -f {} \;
-
-# Remove cmake configuration files used to build the Boost libraries
-find $RPM_BUILD_ROOT%{_mingw32_libdir}/ -name '*.cmake' -exec %{__rm} -f {} \;
 
 # Move DLL's to bindir
 %{__install} -d $RPM_BUILD_ROOT $RPM_BUILD_ROOT%{_mingw32_bindir}
@@ -275,6 +283,9 @@ rm -rf $RPM_BUILD_ROOT
 
 
 %changelog
+* Thu Nov 18 2010 Thomas Sailer <t.sailer@alumni.ethz.ch> - 1.44.0-1
+- update to 1.44.0
+
 * Thu Jun  3 2010 Thomas Sailer <t.sailer@alumni.ethz.ch> - 1.41.0-2
 - update to gcc 4.5
 

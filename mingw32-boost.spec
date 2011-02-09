@@ -9,17 +9,28 @@
 
 Name:           mingw32-%{name1}
 Version:        1.44.0
+%global pristine_version 1_44_0
 Release:        1%{?dist}
 Summary:        MinGW Windows port of Boost C++ Libraries
 
 License:        Boost
 Group:          Development/Libraries
-URL:            http://sodium.resophonic.com/boost-cmake/%{version}.cmake0/
-%global full_version %{name1}-%{version}.cmake
-Source:         %{full_version}.tar.bz2
+# The CMake build framework (set of CMakeLists.txt and module.cmake files) is
+# added on top of the official Boost release (http://www.boost.org), thanks to
+# a dedicated patch. That CMake framework (and patch) is hosted and maintained
+# on Gitorious, for now in the following Git repository:
+# http://gitorious.org/boost/denisarnauds-zeuners-boost-cmake
+%global full_pristine_version %{name1}_%{pristine_version}
+%global full_cmake_version %{name1}-%{version}.cmake
+URL:            http://www.boost.org
+%global full_version %{name1}-%{version}.cmake0
+Source:         http://downloads.sourceforge.net/%{name1}/%{full_pristine_version}.tar.bz2
 BuildRoot:      %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 
-Patch0:         boost-cmake-soname.patch
+Patch0:         cmakeify_boost_1440.patch
+Patch1:         boost-graph-compile.patch
+# Patches from SVN to fix compilation issues
+Patch2:         serialization-mingw.patch
 
 %if 0%{?fedora} >= 13
   %global sonamever %{version}
@@ -66,36 +77,40 @@ Static version of the MinGW Windows Boost C++ library.
 %{_mingw32_debug_package}
 
 %prep
-%setup -q -n %{full_version}
+%setup -q -n %{full_pristine_version}
 
-sed 's/_FEDORA_SONAME/%{sonamever}/' %{PATCH0} | %{__patch} -p0 --fuzz=0
+# CMake framework (CMakeLists.txt, *.cmake and documentation files)
+%patch0 -p1
+
+# Temporary
+%patch1 -p0
+%patch2 -p0
 
 %build
-%{__mkdir_p} build
-cd build
-
 # Support for building tests.
-%define boost_testflags -DBUILD_TESTS="NONE"
+%global boost_testflags -DBUILD_TESTS="NONE"
 
-%_mingw32_cmake -DCMAKE_BUILD_TYPE=RelWithDebInfo %{boost_testflags} \
-                -DENABLE_SINGLE_THREADED=YES -DINSTALL_VERSIONED=OFF -DWITH_MPI=OFF ..
-make VERBOSE=1 %{?_smp_mflags}
-cd %{_builddir}/%{full_version}
-
+( echo ============================= build serial ==================
+  mkdir serial
+  cd serial
+  %_mingw32_cmake -DCMAKE_BUILD_TYPE=RelWithDebInfo %{boost_testflags} \
+                  -DENABLE_SINGLE_THREADED=YES -DINSTALL_VERSIONED=OFF \
+                  -DWITH_MPI=OFF ..
+  make VERBOSE=1 %{?_smp_mflags}
+)
 
 %install
 %{__rm} -rf $RPM_BUILD_ROOT
 
-cd %{_builddir}/%{full_version}/build
-DESTDIR=$RPM_BUILD_ROOT make VERBOSE=1 install
-
-cd %{_builddir}/%{full_version}
+echo ============================= install serial ==================
+DESTDIR=$RPM_BUILD_ROOT make -C serial VERBOSE=1 install
+# Kill any debug library versions that may show up un-invited.
+%{__rm} -f $RPM_BUILD_ROOT/%{_libdir}/*-d.*
+# Remove cmake configuration files used to build the Boost libraries
+find $RPM_BUILD_ROOT/%{_mingw32_libdir} -name '*.cmake' -exec %{__rm} -f {} \;
 
 # Remove scripts used to generate include files
 find $RPM_BUILD_ROOT%{_mingw32_includedir}/ \( -name '*.pl' -o -name '*.sh' \) -exec %{__rm} -f {} \;
-
-# Remove cmake configuration files used to build the Boost libraries
-find $RPM_BUILD_ROOT%{_mingw32_libdir}/ -name '*.cmake' -exec %{__rm} -f {} \;
 
 # Move DLL's to bindir
 %{__install} -d $RPM_BUILD_ROOT $RPM_BUILD_ROOT%{_mingw32_bindir}
@@ -109,167 +124,167 @@ rm -rf $RPM_BUILD_ROOT
 %defattr(-,root,root,-)
 %doc LICENSE_1_0.txt
 %{_mingw32_includedir}/boost
-%{_mingw32_bindir}/boost_date_time-gcc45-1_41.dll
-%{_mingw32_libdir}/libboost_date_time-gcc45-1_41.dll.a
-%{_mingw32_bindir}/boost_date_time-gcc45-d-1_41.dll
-%{_mingw32_libdir}/libboost_date_time-gcc45-d-1_41.dll.a
-%{_mingw32_bindir}/boost_date_time-gcc45-mt-1_41.dll
-%{_mingw32_libdir}/libboost_date_time-gcc45-mt-1_41.dll.a
-%{_mingw32_bindir}/boost_date_time-gcc45-mt-d-1_41.dll
-%{_mingw32_libdir}/libboost_date_time-gcc45-mt-d-1_41.dll.a
-%{_mingw32_bindir}/boost_filesystem-gcc45-1_41.dll
-%{_mingw32_libdir}/libboost_filesystem-gcc45-1_41.dll.a
-%{_mingw32_bindir}/boost_filesystem-gcc45-d-1_41.dll
-%{_mingw32_libdir}/libboost_filesystem-gcc45-d-1_41.dll.a
-%{_mingw32_bindir}/boost_filesystem-gcc45-mt-1_41.dll
-%{_mingw32_libdir}/libboost_filesystem-gcc45-mt-1_41.dll.a
-%{_mingw32_bindir}/boost_filesystem-gcc45-mt-d-1_41.dll
-%{_mingw32_libdir}/libboost_filesystem-gcc45-mt-d-1_41.dll.a
-%{_mingw32_bindir}/boost_graph-gcc45-1_41.dll
-%{_mingw32_libdir}/libboost_graph-gcc45-1_41.dll.a
-%{_mingw32_bindir}/boost_graph-gcc45-d-1_41.dll
-%{_mingw32_libdir}/libboost_graph-gcc45-d-1_41.dll.a
-%{_mingw32_bindir}/boost_graph-gcc45-mt-1_41.dll
-%{_mingw32_libdir}/libboost_graph-gcc45-mt-1_41.dll.a
-%{_mingw32_bindir}/boost_graph-gcc45-mt-d-1_41.dll
-%{_mingw32_libdir}/libboost_graph-gcc45-mt-d-1_41.dll.a
-%{_mingw32_bindir}/boost_iostreams-gcc45-1_41.dll
-%{_mingw32_libdir}/libboost_iostreams-gcc45-1_41.dll.a
-%{_mingw32_bindir}/boost_iostreams-gcc45-d-1_41.dll
-%{_mingw32_libdir}/libboost_iostreams-gcc45-d-1_41.dll.a
-%{_mingw32_bindir}/boost_iostreams-gcc45-mt-1_41.dll
-%{_mingw32_libdir}/libboost_iostreams-gcc45-mt-1_41.dll.a
-%{_mingw32_bindir}/boost_iostreams-gcc45-mt-d-1_41.dll
-%{_mingw32_libdir}/libboost_iostreams-gcc45-mt-d-1_41.dll.a
-%{_mingw32_bindir}/boost_prg_exec_monitor-gcc45-1_41.dll
-%{_mingw32_libdir}/libboost_prg_exec_monitor-gcc45-1_41.dll.a
-%{_mingw32_bindir}/boost_prg_exec_monitor-gcc45-d-1_41.dll
-%{_mingw32_libdir}/libboost_prg_exec_monitor-gcc45-d-1_41.dll.a
-%{_mingw32_bindir}/boost_prg_exec_monitor-gcc45-mt-1_41.dll
-%{_mingw32_libdir}/libboost_prg_exec_monitor-gcc45-mt-1_41.dll.a
-%{_mingw32_bindir}/boost_prg_exec_monitor-gcc45-mt-d-1_41.dll
-%{_mingw32_libdir}/libboost_prg_exec_monitor-gcc45-mt-d-1_41.dll.a
-%{_mingw32_bindir}/boost_program_options-gcc45-1_41.dll
-%{_mingw32_libdir}/libboost_program_options-gcc45-1_41.dll.a
-%{_mingw32_bindir}/boost_program_options-gcc45-d-1_41.dll
-%{_mingw32_libdir}/libboost_program_options-gcc45-d-1_41.dll.a
-%{_mingw32_bindir}/boost_program_options-gcc45-mt-1_41.dll
-%{_mingw32_libdir}/libboost_program_options-gcc45-mt-1_41.dll.a
-%{_mingw32_bindir}/boost_program_options-gcc45-mt-d-1_41.dll
-%{_mingw32_libdir}/libboost_program_options-gcc45-mt-d-1_41.dll.a
-%{_mingw32_bindir}/boost_regex-gcc45-1_41.dll
-%{_mingw32_libdir}/libboost_regex-gcc45-1_41.dll.a
-%{_mingw32_bindir}/boost_regex-gcc45-d-1_41.dll
-%{_mingw32_libdir}/libboost_regex-gcc45-d-1_41.dll.a
-%{_mingw32_bindir}/boost_regex-gcc45-mt-1_41.dll
-%{_mingw32_libdir}/libboost_regex-gcc45-mt-1_41.dll.a
-%{_mingw32_bindir}/boost_regex-gcc45-mt-d-1_41.dll
-%{_mingw32_libdir}/libboost_regex-gcc45-mt-d-1_41.dll.a
-%{_mingw32_bindir}/boost_serialization-gcc45-1_41.dll
-%{_mingw32_libdir}/libboost_serialization-gcc45-1_41.dll.a
-%{_mingw32_bindir}/boost_serialization-gcc45-d-1_41.dll
-%{_mingw32_libdir}/libboost_serialization-gcc45-d-1_41.dll.a
-%{_mingw32_bindir}/boost_serialization-gcc45-mt-1_41.dll
-%{_mingw32_libdir}/libboost_serialization-gcc45-mt-1_41.dll.a
-%{_mingw32_bindir}/boost_serialization-gcc45-mt-d-1_41.dll
-%{_mingw32_libdir}/libboost_serialization-gcc45-mt-d-1_41.dll.a
-%{_mingw32_bindir}/boost_signals-gcc45-1_41.dll
-%{_mingw32_libdir}/libboost_signals-gcc45-1_41.dll.a
-%{_mingw32_bindir}/boost_signals-gcc45-d-1_41.dll
-%{_mingw32_libdir}/libboost_signals-gcc45-d-1_41.dll.a
-%{_mingw32_bindir}/boost_signals-gcc45-mt-1_41.dll
-%{_mingw32_libdir}/libboost_signals-gcc45-mt-1_41.dll.a
-%{_mingw32_bindir}/boost_signals-gcc45-mt-d-1_41.dll
-%{_mingw32_libdir}/libboost_signals-gcc45-mt-d-1_41.dll.a
-%{_mingw32_bindir}/boost_system-gcc45-1_41.dll
-%{_mingw32_libdir}/libboost_system-gcc45-1_41.dll.a
-%{_mingw32_bindir}/boost_system-gcc45-d-1_41.dll
-%{_mingw32_libdir}/libboost_system-gcc45-d-1_41.dll.a
-%{_mingw32_bindir}/boost_system-gcc45-mt-1_41.dll
-%{_mingw32_libdir}/libboost_system-gcc45-mt-1_41.dll.a
-%{_mingw32_bindir}/boost_system-gcc45-mt-d-1_41.dll
-%{_mingw32_libdir}/libboost_system-gcc45-mt-d-1_41.dll.a
-%{_mingw32_bindir}/boost_thread-gcc45-mt-1_41.dll
-%{_mingw32_libdir}/libboost_thread-gcc45-mt-1_41.dll.a
-%{_mingw32_bindir}/boost_thread-gcc45-mt-d-1_41.dll
-%{_mingw32_libdir}/libboost_thread-gcc45-mt-d-1_41.dll.a
-%{_mingw32_bindir}/boost_unit_test_framework-gcc45-1_41.dll
-%{_mingw32_libdir}/libboost_unit_test_framework-gcc45-1_41.dll.a
-%{_mingw32_bindir}/boost_unit_test_framework-gcc45-d-1_41.dll
-%{_mingw32_libdir}/libboost_unit_test_framework-gcc45-d-1_41.dll.a
-%{_mingw32_bindir}/boost_unit_test_framework-gcc45-mt-1_41.dll
-%{_mingw32_libdir}/libboost_unit_test_framework-gcc45-mt-1_41.dll.a
-%{_mingw32_bindir}/boost_unit_test_framework-gcc45-mt-d-1_41.dll
-%{_mingw32_libdir}/libboost_unit_test_framework-gcc45-mt-d-1_41.dll.a
-%{_mingw32_bindir}/boost_wave-gcc45-mt-1_41.dll
-%{_mingw32_libdir}/libboost_wave-gcc45-mt-1_41.dll.a
-%{_mingw32_bindir}/boost_wave-gcc45-mt-d-1_41.dll
-%{_mingw32_libdir}/libboost_wave-gcc45-mt-d-1_41.dll.a
-%{_mingw32_bindir}/boost_wserialization-gcc45-1_41.dll
-%{_mingw32_libdir}/libboost_wserialization-gcc45-1_41.dll.a
-%{_mingw32_bindir}/boost_wserialization-gcc45-d-1_41.dll
-%{_mingw32_libdir}/libboost_wserialization-gcc45-d-1_41.dll.a
-%{_mingw32_bindir}/boost_wserialization-gcc45-mt-1_41.dll
-%{_mingw32_libdir}/libboost_wserialization-gcc45-mt-1_41.dll.a
-%{_mingw32_bindir}/boost_wserialization-gcc45-mt-d-1_41.dll
-%{_mingw32_libdir}/libboost_wserialization-gcc45-mt-d-1_41.dll.a
+%{_mingw32_bindir}/boost_date_time-gcc45-1_44.dll
+%{_mingw32_libdir}/libboost_date_time-gcc45-1_44.dll.a
+%{_mingw32_bindir}/boost_date_time-gcc45-d-1_44.dll
+%{_mingw32_libdir}/libboost_date_time-gcc45-d-1_44.dll.a
+%{_mingw32_bindir}/boost_date_time-gcc45-mt-1_44.dll
+%{_mingw32_libdir}/libboost_date_time-gcc45-mt-1_44.dll.a
+%{_mingw32_bindir}/boost_date_time-gcc45-mt-d-1_44.dll
+%{_mingw32_libdir}/libboost_date_time-gcc45-mt-d-1_44.dll.a
+%{_mingw32_bindir}/boost_filesystem-gcc45-1_44.dll
+%{_mingw32_libdir}/libboost_filesystem-gcc45-1_44.dll.a
+%{_mingw32_bindir}/boost_filesystem-gcc45-d-1_44.dll
+%{_mingw32_libdir}/libboost_filesystem-gcc45-d-1_44.dll.a
+%{_mingw32_bindir}/boost_filesystem-gcc45-mt-1_44.dll
+%{_mingw32_libdir}/libboost_filesystem-gcc45-mt-1_44.dll.a
+%{_mingw32_bindir}/boost_filesystem-gcc45-mt-d-1_44.dll
+%{_mingw32_libdir}/libboost_filesystem-gcc45-mt-d-1_44.dll.a
+%{_mingw32_bindir}/boost_graph-gcc45-1_44.dll
+%{_mingw32_libdir}/libboost_graph-gcc45-1_44.dll.a
+%{_mingw32_bindir}/boost_graph-gcc45-d-1_44.dll
+%{_mingw32_libdir}/libboost_graph-gcc45-d-1_44.dll.a
+%{_mingw32_bindir}/boost_graph-gcc45-mt-1_44.dll
+%{_mingw32_libdir}/libboost_graph-gcc45-mt-1_44.dll.a
+%{_mingw32_bindir}/boost_graph-gcc45-mt-d-1_44.dll
+%{_mingw32_libdir}/libboost_graph-gcc45-mt-d-1_44.dll.a
+%{_mingw32_bindir}/boost_iostreams-gcc45-1_44.dll
+%{_mingw32_libdir}/libboost_iostreams-gcc45-1_44.dll.a
+%{_mingw32_bindir}/boost_iostreams-gcc45-d-1_44.dll
+%{_mingw32_libdir}/libboost_iostreams-gcc45-d-1_44.dll.a
+%{_mingw32_bindir}/boost_iostreams-gcc45-mt-1_44.dll
+%{_mingw32_libdir}/libboost_iostreams-gcc45-mt-1_44.dll.a
+%{_mingw32_bindir}/boost_iostreams-gcc45-mt-d-1_44.dll
+%{_mingw32_libdir}/libboost_iostreams-gcc45-mt-d-1_44.dll.a
+%{_mingw32_bindir}/boost_prg_exec_monitor-gcc45-1_44.dll
+%{_mingw32_libdir}/libboost_prg_exec_monitor-gcc45-1_44.dll.a
+%{_mingw32_bindir}/boost_prg_exec_monitor-gcc45-d-1_44.dll
+%{_mingw32_libdir}/libboost_prg_exec_monitor-gcc45-d-1_44.dll.a
+%{_mingw32_bindir}/boost_prg_exec_monitor-gcc45-mt-1_44.dll
+%{_mingw32_libdir}/libboost_prg_exec_monitor-gcc45-mt-1_44.dll.a
+%{_mingw32_bindir}/boost_prg_exec_monitor-gcc45-mt-d-1_44.dll
+%{_mingw32_libdir}/libboost_prg_exec_monitor-gcc45-mt-d-1_44.dll.a
+%{_mingw32_bindir}/boost_program_options-gcc45-1_44.dll
+%{_mingw32_libdir}/libboost_program_options-gcc45-1_44.dll.a
+%{_mingw32_bindir}/boost_program_options-gcc45-d-1_44.dll
+%{_mingw32_libdir}/libboost_program_options-gcc45-d-1_44.dll.a
+%{_mingw32_bindir}/boost_program_options-gcc45-mt-1_44.dll
+%{_mingw32_libdir}/libboost_program_options-gcc45-mt-1_44.dll.a
+%{_mingw32_bindir}/boost_program_options-gcc45-mt-d-1_44.dll
+%{_mingw32_libdir}/libboost_program_options-gcc45-mt-d-1_44.dll.a
+%{_mingw32_bindir}/boost_regex-gcc45-1_44.dll
+%{_mingw32_libdir}/libboost_regex-gcc45-1_44.dll.a
+%{_mingw32_bindir}/boost_regex-gcc45-d-1_44.dll
+%{_mingw32_libdir}/libboost_regex-gcc45-d-1_44.dll.a
+%{_mingw32_bindir}/boost_regex-gcc45-mt-1_44.dll
+%{_mingw32_libdir}/libboost_regex-gcc45-mt-1_44.dll.a
+%{_mingw32_bindir}/boost_regex-gcc45-mt-d-1_44.dll
+%{_mingw32_libdir}/libboost_regex-gcc45-mt-d-1_44.dll.a
+%{_mingw32_bindir}/boost_serialization-gcc45-1_44.dll
+%{_mingw32_libdir}/libboost_serialization-gcc45-1_44.dll.a
+%{_mingw32_bindir}/boost_serialization-gcc45-d-1_44.dll
+%{_mingw32_libdir}/libboost_serialization-gcc45-d-1_44.dll.a
+%{_mingw32_bindir}/boost_serialization-gcc45-mt-1_44.dll
+%{_mingw32_libdir}/libboost_serialization-gcc45-mt-1_44.dll.a
+%{_mingw32_bindir}/boost_serialization-gcc45-mt-d-1_44.dll
+%{_mingw32_libdir}/libboost_serialization-gcc45-mt-d-1_44.dll.a
+%{_mingw32_bindir}/boost_signals-gcc45-1_44.dll
+%{_mingw32_libdir}/libboost_signals-gcc45-1_44.dll.a
+%{_mingw32_bindir}/boost_signals-gcc45-d-1_44.dll
+%{_mingw32_libdir}/libboost_signals-gcc45-d-1_44.dll.a
+%{_mingw32_bindir}/boost_signals-gcc45-mt-1_44.dll
+%{_mingw32_libdir}/libboost_signals-gcc45-mt-1_44.dll.a
+%{_mingw32_bindir}/boost_signals-gcc45-mt-d-1_44.dll
+%{_mingw32_libdir}/libboost_signals-gcc45-mt-d-1_44.dll.a
+%{_mingw32_bindir}/boost_system-gcc45-1_44.dll
+%{_mingw32_libdir}/libboost_system-gcc45-1_44.dll.a
+%{_mingw32_bindir}/boost_system-gcc45-d-1_44.dll
+%{_mingw32_libdir}/libboost_system-gcc45-d-1_44.dll.a
+%{_mingw32_bindir}/boost_system-gcc45-mt-1_44.dll
+%{_mingw32_libdir}/libboost_system-gcc45-mt-1_44.dll.a
+%{_mingw32_bindir}/boost_system-gcc45-mt-d-1_44.dll
+%{_mingw32_libdir}/libboost_system-gcc45-mt-d-1_44.dll.a
+%{_mingw32_bindir}/boost_thread-gcc45-mt-1_44.dll
+%{_mingw32_libdir}/libboost_thread-gcc45-mt-1_44.dll.a
+%{_mingw32_bindir}/boost_thread-gcc45-mt-d-1_44.dll
+%{_mingw32_libdir}/libboost_thread-gcc45-mt-d-1_44.dll.a
+%{_mingw32_bindir}/boost_unit_test_framework-gcc45-1_44.dll
+%{_mingw32_libdir}/libboost_unit_test_framework-gcc45-1_44.dll.a
+%{_mingw32_bindir}/boost_unit_test_framework-gcc45-d-1_44.dll
+%{_mingw32_libdir}/libboost_unit_test_framework-gcc45-d-1_44.dll.a
+%{_mingw32_bindir}/boost_unit_test_framework-gcc45-mt-1_44.dll
+%{_mingw32_libdir}/libboost_unit_test_framework-gcc45-mt-1_44.dll.a
+%{_mingw32_bindir}/boost_unit_test_framework-gcc45-mt-d-1_44.dll
+%{_mingw32_libdir}/libboost_unit_test_framework-gcc45-mt-d-1_44.dll.a
+%{_mingw32_bindir}/boost_wave-gcc45-mt-1_44.dll
+%{_mingw32_libdir}/libboost_wave-gcc45-mt-1_44.dll.a
+%{_mingw32_bindir}/boost_wave-gcc45-mt-d-1_44.dll
+%{_mingw32_libdir}/libboost_wave-gcc45-mt-d-1_44.dll.a
+%{_mingw32_bindir}/boost_wserialization-gcc45-1_44.dll
+%{_mingw32_libdir}/libboost_wserialization-gcc45-1_44.dll.a
+%{_mingw32_bindir}/boost_wserialization-gcc45-d-1_44.dll
+%{_mingw32_libdir}/libboost_wserialization-gcc45-d-1_44.dll.a
+%{_mingw32_bindir}/boost_wserialization-gcc45-mt-1_44.dll
+%{_mingw32_libdir}/libboost_wserialization-gcc45-mt-1_44.dll.a
+%{_mingw32_bindir}/boost_wserialization-gcc45-mt-d-1_44.dll
+%{_mingw32_libdir}/libboost_wserialization-gcc45-mt-d-1_44.dll.a
 %{_mingw32_datadir}/%{name1}-%{version}
 %{_mingw32_datadir}/cmake/%{name1}/BoostConfig*.cmake
 
 %files static
 %defattr(-,root,root,-)
-%{_mingw32_libdir}/libboost_date_time-gcc45-1_41.a
-%{_mingw32_libdir}/libboost_date_time-gcc45-d-1_41.a
-%{_mingw32_libdir}/libboost_date_time-gcc45-mt-1_41.a
-%{_mingw32_libdir}/libboost_date_time-gcc45-mt-d-1_41.a
-%{_mingw32_libdir}/libboost_filesystem-gcc45-1_41.a
-%{_mingw32_libdir}/libboost_filesystem-gcc45-d-1_41.a
-%{_mingw32_libdir}/libboost_filesystem-gcc45-mt-1_41.a
-%{_mingw32_libdir}/libboost_filesystem-gcc45-mt-d-1_41.a
-%{_mingw32_libdir}/libboost_iostreams-gcc45-1_41.a
-%{_mingw32_libdir}/libboost_iostreams-gcc45-d-1_41.a
-%{_mingw32_libdir}/libboost_iostreams-gcc45-mt-1_41.a
-%{_mingw32_libdir}/libboost_iostreams-gcc45-mt-d-1_41.a
-%{_mingw32_libdir}/libboost_prg_exec_monitor-gcc45-1_41.a
-%{_mingw32_libdir}/libboost_prg_exec_monitor-gcc45-d-1_41.a
-%{_mingw32_libdir}/libboost_prg_exec_monitor-gcc45-mt-1_41.a
-%{_mingw32_libdir}/libboost_prg_exec_monitor-gcc45-mt-d-1_41.a
-%{_mingw32_libdir}/libboost_program_options-gcc45-1_41.a
-%{_mingw32_libdir}/libboost_program_options-gcc45-d-1_41.a
-%{_mingw32_libdir}/libboost_program_options-gcc45-mt-1_41.a
-%{_mingw32_libdir}/libboost_program_options-gcc45-mt-d-1_41.a
-%{_mingw32_libdir}/libboost_regex-gcc45-1_41.a
-%{_mingw32_libdir}/libboost_regex-gcc45-d-1_41.a
-%{_mingw32_libdir}/libboost_regex-gcc45-mt-1_41.a
-%{_mingw32_libdir}/libboost_regex-gcc45-mt-d-1_41.a
-%{_mingw32_libdir}/libboost_serialization-gcc45-1_41.a
-%{_mingw32_libdir}/libboost_serialization-gcc45-d-1_41.a
-%{_mingw32_libdir}/libboost_serialization-gcc45-mt-1_41.a
-%{_mingw32_libdir}/libboost_serialization-gcc45-mt-d-1_41.a
-%{_mingw32_libdir}/libboost_signals-gcc45-1_41.a
-%{_mingw32_libdir}/libboost_signals-gcc45-d-1_41.a
-%{_mingw32_libdir}/libboost_signals-gcc45-mt-1_41.a
-%{_mingw32_libdir}/libboost_signals-gcc45-mt-d-1_41.a
-%{_mingw32_libdir}/libboost_system-gcc45-1_41.a
-%{_mingw32_libdir}/libboost_system-gcc45-d-1_41.a
-%{_mingw32_libdir}/libboost_system-gcc45-mt-1_41.a
-%{_mingw32_libdir}/libboost_system-gcc45-mt-d-1_41.a
-%{_mingw32_libdir}/libboost_test_exec_monitor-gcc45-1_41.a
-%{_mingw32_libdir}/libboost_test_exec_monitor-gcc45-d-1_41.a
-%{_mingw32_libdir}/libboost_test_exec_monitor-gcc45-mt-1_41.a
-%{_mingw32_libdir}/libboost_test_exec_monitor-gcc45-mt-d-1_41.a
-%{_mingw32_libdir}/libboost_thread-gcc45-mt-1_41.a
-%{_mingw32_libdir}/libboost_thread-gcc45-mt-d-1_41.a
-%{_mingw32_libdir}/libboost_unit_test_framework-gcc45-1_41.a
-%{_mingw32_libdir}/libboost_unit_test_framework-gcc45-d-1_41.a
-%{_mingw32_libdir}/libboost_unit_test_framework-gcc45-mt-1_41.a
-%{_mingw32_libdir}/libboost_unit_test_framework-gcc45-mt-d-1_41.a
-%{_mingw32_libdir}/libboost_wave-gcc45-mt-1_41.a
-%{_mingw32_libdir}/libboost_wave-gcc45-mt-d-1_41.a
-%{_mingw32_libdir}/libboost_wserialization-gcc45-1_41.a
-%{_mingw32_libdir}/libboost_wserialization-gcc45-d-1_41.a
-%{_mingw32_libdir}/libboost_wserialization-gcc45-mt-1_41.a
-%{_mingw32_libdir}/libboost_wserialization-gcc45-mt-d-1_41.a
+%{_mingw32_libdir}/libboost_date_time-gcc45-1_44.a
+%{_mingw32_libdir}/libboost_date_time-gcc45-d-1_44.a
+%{_mingw32_libdir}/libboost_date_time-gcc45-mt-1_44.a
+%{_mingw32_libdir}/libboost_date_time-gcc45-mt-d-1_44.a
+%{_mingw32_libdir}/libboost_filesystem-gcc45-1_44.a
+%{_mingw32_libdir}/libboost_filesystem-gcc45-d-1_44.a
+%{_mingw32_libdir}/libboost_filesystem-gcc45-mt-1_44.a
+%{_mingw32_libdir}/libboost_filesystem-gcc45-mt-d-1_44.a
+%{_mingw32_libdir}/libboost_iostreams-gcc45-1_44.a
+%{_mingw32_libdir}/libboost_iostreams-gcc45-d-1_44.a
+%{_mingw32_libdir}/libboost_iostreams-gcc45-mt-1_44.a
+%{_mingw32_libdir}/libboost_iostreams-gcc45-mt-d-1_44.a
+%{_mingw32_libdir}/libboost_prg_exec_monitor-gcc45-1_44.a
+%{_mingw32_libdir}/libboost_prg_exec_monitor-gcc45-d-1_44.a
+%{_mingw32_libdir}/libboost_prg_exec_monitor-gcc45-mt-1_44.a
+%{_mingw32_libdir}/libboost_prg_exec_monitor-gcc45-mt-d-1_44.a
+%{_mingw32_libdir}/libboost_program_options-gcc45-1_44.a
+%{_mingw32_libdir}/libboost_program_options-gcc45-d-1_44.a
+%{_mingw32_libdir}/libboost_program_options-gcc45-mt-1_44.a
+%{_mingw32_libdir}/libboost_program_options-gcc45-mt-d-1_44.a
+%{_mingw32_libdir}/libboost_regex-gcc45-1_44.a
+%{_mingw32_libdir}/libboost_regex-gcc45-d-1_44.a
+%{_mingw32_libdir}/libboost_regex-gcc45-mt-1_44.a
+%{_mingw32_libdir}/libboost_regex-gcc45-mt-d-1_44.a
+%{_mingw32_libdir}/libboost_serialization-gcc45-1_44.a
+%{_mingw32_libdir}/libboost_serialization-gcc45-d-1_44.a
+%{_mingw32_libdir}/libboost_serialization-gcc45-mt-1_44.a
+%{_mingw32_libdir}/libboost_serialization-gcc45-mt-d-1_44.a
+%{_mingw32_libdir}/libboost_signals-gcc45-1_44.a
+%{_mingw32_libdir}/libboost_signals-gcc45-d-1_44.a
+%{_mingw32_libdir}/libboost_signals-gcc45-mt-1_44.a
+%{_mingw32_libdir}/libboost_signals-gcc45-mt-d-1_44.a
+%{_mingw32_libdir}/libboost_system-gcc45-1_44.a
+%{_mingw32_libdir}/libboost_system-gcc45-d-1_44.a
+%{_mingw32_libdir}/libboost_system-gcc45-mt-1_44.a
+%{_mingw32_libdir}/libboost_system-gcc45-mt-d-1_44.a
+%{_mingw32_libdir}/libboost_test_exec_monitor-gcc45-1_44.a
+%{_mingw32_libdir}/libboost_test_exec_monitor-gcc45-d-1_44.a
+%{_mingw32_libdir}/libboost_test_exec_monitor-gcc45-mt-1_44.a
+%{_mingw32_libdir}/libboost_test_exec_monitor-gcc45-mt-d-1_44.a
+%{_mingw32_libdir}/libboost_thread-gcc45-mt-1_44.a
+%{_mingw32_libdir}/libboost_thread-gcc45-mt-d-1_44.a
+%{_mingw32_libdir}/libboost_unit_test_framework-gcc45-1_44.a
+%{_mingw32_libdir}/libboost_unit_test_framework-gcc45-d-1_44.a
+%{_mingw32_libdir}/libboost_unit_test_framework-gcc45-mt-1_44.a
+%{_mingw32_libdir}/libboost_unit_test_framework-gcc45-mt-d-1_44.a
+%{_mingw32_libdir}/libboost_wave-gcc45-mt-1_44.a
+%{_mingw32_libdir}/libboost_wave-gcc45-mt-d-1_44.a
+%{_mingw32_libdir}/libboost_wserialization-gcc45-1_44.a
+%{_mingw32_libdir}/libboost_wserialization-gcc45-d-1_44.a
+%{_mingw32_libdir}/libboost_wserialization-gcc45-mt-1_44.a
+%{_mingw32_libdir}/libboost_wserialization-gcc45-mt-d-1_44.a
 
 
 %changelog

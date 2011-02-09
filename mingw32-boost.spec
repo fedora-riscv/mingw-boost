@@ -8,19 +8,18 @@
 %global name1 boost
 
 Name:           mingw32-%{name1}
-Version:        1.41.0
-Release:        2%{?dist}
+Version:        1.44.0
+Release:        1%{?dist}
 Summary:        MinGW Windows port of Boost C++ Libraries
 
 License:        Boost
 Group:          Development/Libraries
 URL:            http://sodium.resophonic.com/boost-cmake/%{version}.cmake0/
-%global full_version %{name1}-%{version}.cmake0
+%global full_version %{name1}-%{version}.cmake
 Source:         %{full_version}.tar.bz2
 BuildRoot:      %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 
 Patch0:         boost-cmake-soname.patch
-Patch1:         boost-graph-compile.patch
 
 %if 0%{?fedora} >= 13
   %global sonamever %{version}
@@ -70,7 +69,6 @@ Static version of the MinGW Windows Boost C++ library.
 %setup -q -n %{full_version}
 
 sed 's/_FEDORA_SONAME/%{sonamever}/' %{PATCH0} | %{__patch} -p0 --fuzz=0
-%patch1 -p0
 
 %build
 %{__mkdir_p} build
@@ -80,7 +78,7 @@ cd build
 %define boost_testflags -DBUILD_TESTS="NONE"
 
 %_mingw32_cmake -DCMAKE_BUILD_TYPE=RelWithDebInfo %{boost_testflags} \
-                -DENABLE_SINGLE_THREADED=YES -DINSTALL_VERSIONED=OFF ..
+                -DENABLE_SINGLE_THREADED=YES -DINSTALL_VERSIONED=OFF -DWITH_MPI=OFF ..
 make VERBOSE=1 %{?_smp_mflags}
 cd %{_builddir}/%{full_version}
 
@@ -275,6 +273,9 @@ rm -rf $RPM_BUILD_ROOT
 
 
 %changelog
+* Wed Jul 28 2010 Thomas Sailer <t.sailer@alumni.ethz.ch> - 1.44.0-1
+- update to 1.44.0
+
 * Thu Jun  3 2010 Thomas Sailer <t.sailer@alumni.ethz.ch> - 1.41.0-2
 - update to gcc 4.5
 

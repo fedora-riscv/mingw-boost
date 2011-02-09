@@ -93,9 +93,6 @@ sed 's/_FEDORA_SONAME/%{sonamever}/' %{PATCH2} | %{__patch} -p0 --fuzz=0
 # Support for building tests.
 %global boost_testflags -DBUILD_TESTS="NONE"
 
-
--O2 -g -pipe -Wall -Wp,-D_FORTIFY_SOURCE=2 -fexceptions --param=ssp-buffer-size=4 -mms-bitfields
-
 ( echo ============================= build serial ==================
   mkdir serial
   cd serial
@@ -180,6 +177,14 @@ rm -rf $RPM_BUILD_ROOT
 %{_mingw32_libdir}/libboost_program_options-gcc45-mt-1_46.dll.a
 %{_mingw32_bindir}/boost_program_options-gcc45-mt-d-1_46.dll
 %{_mingw32_libdir}/libboost_program_options-gcc45-mt-d-1_46.dll.a
+%{_mingw32_bindir}/boost_random-gcc45-1_46.dll
+%{_mingw32_libdir}/libboost_random-gcc45-1_46.dll.a
+%{_mingw32_bindir}/boost_random-gcc45-d-1_46.dll
+%{_mingw32_libdir}/libboost_random-gcc45-d-1_46.dll.a
+%{_mingw32_bindir}/boost_random-gcc45-mt-1_46.dll
+%{_mingw32_libdir}/libboost_random-gcc45-mt-1_46.dll.a
+%{_mingw32_bindir}/boost_random-gcc45-mt-d-1_46.dll
+%{_mingw32_libdir}/libboost_random-gcc45-mt-d-1_46.dll.a
 %{_mingw32_bindir}/boost_regex-gcc45-1_46.dll
 %{_mingw32_libdir}/libboost_regex-gcc45-1_46.dll.a
 %{_mingw32_bindir}/boost_regex-gcc45-d-1_46.dll
@@ -261,6 +266,10 @@ rm -rf $RPM_BUILD_ROOT
 %{_mingw32_libdir}/libboost_program_options-gcc45-d-1_46.a
 %{_mingw32_libdir}/libboost_program_options-gcc45-mt-1_46.a
 %{_mingw32_libdir}/libboost_program_options-gcc45-mt-d-1_46.a
+%{_mingw32_libdir}/libboost_random-gcc45-1_46.a
+%{_mingw32_libdir}/libboost_random-gcc45-d-1_46.a
+%{_mingw32_libdir}/libboost_random-gcc45-mt-1_46.a
+%{_mingw32_libdir}/libboost_random-gcc45-mt-d-1_46.a
 %{_mingw32_libdir}/libboost_regex-gcc45-1_46.a
 %{_mingw32_libdir}/libboost_regex-gcc45-d-1_46.a
 %{_mingw32_libdir}/libboost_regex-gcc45-mt-1_46.a

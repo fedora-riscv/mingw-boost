@@ -10,7 +10,7 @@
 Name:           mingw32-%{name1}
 Version:        1.46.0
 %global version_enc 1_46_0_beta1
-Release:        0.1.beta1%{?dist}
+Release:        0.2.beta1%{?dist}
 Summary:        MinGW Windows port of Boost C++ Libraries
 
 License:        Boost
@@ -305,6 +305,9 @@ rm -rf $RPM_BUILD_ROOT
 
 
 %changelog
+* Fri Apr 22 2011 Kalev Lember <kalev@smartlink.ee> - 1.46.0-0.2.beta1
+- Rebuilt for pseudo-reloc version mismatch (#698827)
+
 * Wed Feb  9 2011 Thomas Sailer <t.sailer@alumni.ethz.ch> - 1.46.0-0.1.beta1
 - update to 1.46.0-beta1
 

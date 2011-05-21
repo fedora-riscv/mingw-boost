@@ -10,7 +10,7 @@
 Name:           mingw32-%{name1}
 Version:        1.46.0
 %global version_enc 1_46_0_beta1
-Release:        0.2.beta1%{?dist}
+Release:        0.3.beta1%{?dist}
 Summary:        MinGW Windows port of Boost C++ Libraries
 
 License:        Boost
@@ -242,7 +242,7 @@ rm -rf $RPM_BUILD_ROOT
 %{_mingw32_bindir}/boost_wserialization-gcc45-mt-d-1_46.dll
 %{_mingw32_libdir}/libboost_wserialization-gcc45-mt-d-1_46.dll.a
 %{_mingw32_datadir}/%{name1}-%{version}
-%{_mingw32_datadir}/cmake/%{name1}/BoostConfig*.cmake
+%{_mingw32_datadir}/cmake/%{name1}
 
 %files static
 %defattr(-,root,root,-)
@@ -305,6 +305,9 @@ rm -rf $RPM_BUILD_ROOT
 
 
 %changelog
+* Sat May 21 2011 Kalev Lember <kalev@smartlink.ee> - 1.46.0-0.3.beta1
+- Own the _mingw32_datadir/cmake/boost/ directory
+
 * Fri Apr 22 2011 Kalev Lember <kalev@smartlink.ee> - 1.46.0-0.2.beta1
 - Rebuilt for pseudo-reloc version mismatch (#698827)
 

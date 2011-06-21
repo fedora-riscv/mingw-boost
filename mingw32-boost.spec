@@ -8,9 +8,9 @@
 %global name1 boost
 
 Name:           mingw32-%{name1}
-Version:        1.46.0
-%global version_enc 1_46_0_beta1
-Release:        0.3.beta1%{?dist}
+Version:        1.46.1
+%global version_enc 1_46_1
+Release:        1%{?dist}
 Summary:        MinGW Windows port of Boost C++ Libraries
 
 License:        Boost
@@ -19,25 +19,28 @@ Group:          Development/Libraries
 # added on top of the official Boost release (http://www.boost.org), thanks to
 # a dedicated patch. That CMake framework (and patch) is hosted and maintained
 # on GitHub, for now in the following Git repository:
-#   https://github.com/denisarnaud/boost-cmake
+#   https://github.com/boost-lib/boost-cmake
 # A clone also exists on Gitorious, where CMake-related work was formely done:
-#   http://gitorious.org/~denisarnaud/boost/denisarnauds-cmake
+#   http://gitorious.org/boost/cmake
 # Upstream work is synchronised thanks to the Ryppl's hosted Git clone:
 #   https://github.com/ryppl/boost-svn/tree/trunk
-%define toplev_dirname %{name1}_%{version_enc}
+%define toplev_dirname %{name}_%{version_enc}
 URL:            http://www.boost.org
-Source: http://downloads.sourceforge.net/%{name}/%{toplev_dirname}.tar.bz2
-BuildRoot:      %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
+Source:         http://downloads.sourceforge.net/%{name}/%{toplev_dirname}.tar.bz2
 
-Patch0:         boost-1.46.0-cmakeify.patch
-Patch1:         boost-1.46.0-cmakeify-more.patch
+# CMake-related files (CMakeLists.txt and module.cmake files)
+Patch0:         boost-1.46.1-cmakeify-full.patch
+
 Patch2:         boost-cmake-soname.patch
 
-# https://svn.boost.org/trac/boost/ticket/4999
-Patch3:         boost-1.46.0-signals-erase.patch
+# The patch may break c++03, and there is therefore no plan yet to include
+# it upstream: https://svn.boost.org/trac/boost/ticket/4999
+Patch3:         boost-1.46.1-signals-erase.patch
 
-# https://svn.boost.org/trac/boost/ticket/5119
-Patch4:         boost-1.46.0-unordered-cctor.patch
+# http://comments.gmane.org/gmane.comp.lib.boost.devel/214323
+# Has been fixed on Boost trunk (will be fixed in Boost-1.47:
+#  https://svn.boost.org/trac/boost/changeset/68725)
+Patch5:         boost-1.46.1-spirit.patch
 
 BuildArch:      noarch
 
@@ -82,12 +85,11 @@ Static version of the MinGW Windows Boost C++ library.
 
 # CMake framework (CMakeLists.txt, *.cmake and documentation files)
 %patch0 -p1
-%patch1 -p1
 sed 's/_FEDORA_SONAME/%{sonamever}/' %{PATCH2} | %{__patch} -p0 --fuzz=0
 
 # fixes
 %patch3 -p1
-%patch4 -p2
+%patch5 -p0
 
 %build
 # Support for building tests.
@@ -305,6 +307,9 @@ rm -rf $RPM_BUILD_ROOT
 
 
 %changelog
+* Tue Jun 21 2011 Thomas Sailer <t.sailer@alumni.ethz.ch> - 1.46.1-1
+- update to 1.46.1
+
 * Sat May 21 2011 Kalev Lember <kalev@smartlink.ee> - 1.46.0-0.3.beta1
 - Own the _mingw32_datadir/cmake/boost/ directory
 

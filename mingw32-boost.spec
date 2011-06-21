@@ -24,9 +24,9 @@ Group:          Development/Libraries
 #   http://gitorious.org/boost/cmake
 # Upstream work is synchronised thanks to the Ryppl's hosted Git clone:
 #   https://github.com/ryppl/boost-svn/tree/trunk
-%define toplev_dirname %{name}_%{version_enc}
+%define toplev_dirname %{name1}_%{version_enc}
 URL:            http://www.boost.org
-Source:         http://downloads.sourceforge.net/%{name}/%{toplev_dirname}.tar.bz2
+Source:         http://downloads.sourceforge.net/%{name1}/%{toplev_dirname}.tar.bz2
 
 # CMake-related files (CMakeLists.txt and module.cmake files)
 Patch0:         boost-1.46.1-cmakeify-full.patch

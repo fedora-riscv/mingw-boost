@@ -11,8 +11,8 @@ Name:           mingw32-%{name1}
 Version:        1.46.1
 %global version_enc 1_46_1
 %global dllboostver 1_46_1
-%global dllgccver gcc45
-Release:        1%{?dist}
+%global dllgccver gcc46
+Release:        2%{?dist}
 Summary:        MinGW Windows port of Boost C++ Libraries
 
 License:        Boost
@@ -309,6 +309,9 @@ rm -rf $RPM_BUILD_ROOT
 
 
 %changelog
+* Tue Jun 28 2011 Kalev Lember <kalev@smartlink.ee> - 1.46.1-2
+- Rebuilt for mingw32-gcc 4.6
+
 * Tue Jun 21 2011 Thomas Sailer <t.sailer@alumni.ethz.ch> - 1.46.1-1
 - update to 1.46.1
 

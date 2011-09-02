@@ -10,7 +10,7 @@
 Name:           mingw32-%{name1}
 Version:        1.47.0
 %global version_enc 1_47_0
-%global dllboostver 1_47_0
+%global dllboostver 1_47
 %global dllgccver gcc46
 Release:        1%{?dist}
 Summary:        MinGW Windows port of Boost C++ Libraries
@@ -132,6 +132,14 @@ rm -rf $RPM_BUILD_ROOT
 %defattr(-,root,root,-)
 %doc LICENSE_1_0.txt
 %{_mingw32_includedir}/boost
+%{_mingw32_bindir}/boost_chrono-%{dllgccver}-%{dllboostver}.dll
+%{_mingw32_libdir}/libboost_chrono-%{dllgccver}-%{dllboostver}.dll.a
+%{_mingw32_bindir}/boost_chrono-%{dllgccver}-d-%{dllboostver}.dll
+%{_mingw32_libdir}/libboost_chrono-%{dllgccver}-d-%{dllboostver}.dll.a
+%{_mingw32_bindir}/boost_chrono-%{dllgccver}-mt-%{dllboostver}.dll
+%{_mingw32_libdir}/libboost_chrono-%{dllgccver}-mt-%{dllboostver}.dll.a
+%{_mingw32_bindir}/boost_chrono-%{dllgccver}-mt-d-%{dllboostver}.dll
+%{_mingw32_libdir}/libboost_chrono-%{dllgccver}-mt-d-%{dllboostver}.dll.a
 %{_mingw32_bindir}/boost_date_time-%{dllgccver}-%{dllboostver}.dll
 %{_mingw32_libdir}/libboost_date_time-%{dllgccver}-%{dllboostver}.dll.a
 %{_mingw32_bindir}/boost_date_time-%{dllgccver}-d-%{dllboostver}.dll
@@ -249,6 +257,10 @@ rm -rf $RPM_BUILD_ROOT
 
 %files static
 %defattr(-,root,root,-)
+%{_mingw32_libdir}/libboost_chrono-%{dllgccver}-%{dllboostver}.a
+%{_mingw32_libdir}/libboost_chrono-%{dllgccver}-d-%{dllboostver}.a
+%{_mingw32_libdir}/libboost_chrono-%{dllgccver}-mt-%{dllboostver}.a
+%{_mingw32_libdir}/libboost_chrono-%{dllgccver}-mt-d-%{dllboostver}.a
 %{_mingw32_libdir}/libboost_date_time-%{dllgccver}-%{dllboostver}.a
 %{_mingw32_libdir}/libboost_date_time-%{dllgccver}-d-%{dllboostver}.a
 %{_mingw32_libdir}/libboost_date_time-%{dllgccver}-mt-%{dllboostver}.a

@@ -8,11 +8,11 @@
 %global name1 boost
 
 Name:           mingw32-%{name1}
-Version:        1.46.1
-%global version_enc 1_46_1
-%global dllboostver 1_46_1
+Version:        1.47.0
+%global version_enc 1_47_0
+%global dllboostver 1_47_0
 %global dllgccver gcc46
-Release:        2%{?dist}
+Release:        1%{?dist}
 Summary:        MinGW Windows port of Boost C++ Libraries
 
 License:        Boost
@@ -30,19 +30,18 @@ Group:          Development/Libraries
 URL:            http://www.boost.org
 Source:         http://downloads.sourceforge.net/%{name1}/%{toplev_dirname}.tar.bz2
 
-# CMake-related files (CMakeLists.txt and module.cmake files)
-Patch0:         boost-1.46.1-cmakeify-full.patch
-
-Patch2:         boost-cmake-soname.patch
+# CMake-related files (CMakeLists.txt and module.cmake files).
+# That patch also contains Web-related documentation for the Trac Wiki
+# devoted to "old" Boost-CMake (up-to-date until Boost-1.41.0).
+Patch0:         boost-1.47.0-cmakeify-full.patch
+Patch1:         boost-cmake-soname.patch
 
 # The patch may break c++03, and there is therefore no plan yet to include
 # it upstream: https://svn.boost.org/trac/boost/ticket/4999
-Patch3:         boost-1.46.1-signals-erase.patch
+Patch2:         boost-1.47.0-signals-erase.patch
 
-# http://comments.gmane.org/gmane.comp.lib.boost.devel/214323
-# Has been fixed on Boost trunk (will be fixed in Boost-1.47:
-#  https://svn.boost.org/trac/boost/changeset/68725)
-Patch5:         boost-1.46.1-spirit.patch
+# https://svn.boost.org/trac/boost/ticket/5731
+Patch3:         boost-1.47.0-exceptions.patch
 
 BuildArch:      noarch
 
@@ -57,6 +56,7 @@ BuildRequires:  mingw32-zlib
 BuildRequires:  mingw32-expat
 BuildRequires:  mingw32-pthreads
 BuildRequires:  perl
+BuildRequires:  chrpath
 # These are required by the native package:
 #BuildRequires:  mingw32-python
 #BuildRequires:  mingw32-libicu
@@ -87,11 +87,11 @@ Static version of the MinGW Windows Boost C++ library.
 
 # CMake framework (CMakeLists.txt, *.cmake and documentation files)
 %patch0 -p1
-sed 's/_FEDORA_SONAME/%{sonamever}/' %{PATCH2} | %{__patch} -p0 --fuzz=0
+sed 's/_FEDORA_SONAME/%{sonamever}/' %{PATCH1} | %{__patch} -p0 --fuzz=0
 
 # fixes
-%patch3 -p1
-%patch5 -p0
+%patch2 -p1
+%patch3 -p0
 
 %build
 # Support for building tests.
@@ -309,6 +309,9 @@ rm -rf $RPM_BUILD_ROOT
 
 
 %changelog
+* Fri Sep  2 2011 Thomas Sailer <t.sailer@alumni.ethz.ch> - 1.47.0-1
+- update to 1.47.0
+
 * Tue Jun 28 2011 Kalev Lember <kalev@smartlink.ee> - 1.46.1-2
 - Rebuilt for mingw32-gcc 4.6
 

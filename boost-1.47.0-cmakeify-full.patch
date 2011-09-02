@@ -2344,6 +2344,119 @@ index 0000000..9512e2e
 +
 +boost_test_compile(bind_unary_addr)
 +
+diff --git a/libs/chrono/CMakeLists.txt b/libs/chrono/CMakeLists.txt
+new file mode 100644
+index 0000000..cf68e74
+--- /dev/null
++++ b/libs/chrono/CMakeLists.txt
+@@ -0,0 +1,28 @@
++#
++# Copyright Troy D. Straszheim
++#
++# Distributed under the Boost Software License, Version 1.0.
++# See http://www.boost.org/LICENSE_1_0.txt
++#
++#----------------------------------------------------------------------------
++# This file was automatically generated from the original CMakeLists.txt file
++# Add a variable to hold the headers for the library
++set (lib_headers
++    chrono.hpp
++    chrono
++)
++
++# Add a library target to the build system
++boost_library_project(
++  chrono
++  SRCDIRS  src
++  TESTDIRS  test
++  HEADERS ${lib_headers}
++  #  DOCDIRS 
++  DESCRIPTION  "Useful time utilities."
++  MODULARIZED
++  AUTHORS  "Vicente J. Botet Escribá <vicente.botet - at - wanadoo.fr>"
++  #  MAINTAINERS 
++)
++
++
+diff --git a/libs/chrono/module.cmake b/libs/chrono/module.cmake
+new file mode 100644
+index 0000000..f160fbd
+--- /dev/null
++++ b/libs/chrono/module.cmake
+@@ -0,0 +1 @@
++boost_module(chrono DEPENDS system)
+diff --git a/libs/chrono/src/CMakeLists.txt b/libs/chrono/src/CMakeLists.txt
+new file mode 100644
+index 0000000..b13377a
+--- /dev/null
++++ b/libs/chrono/src/CMakeLists.txt
+@@ -0,0 +1,19 @@
++#
++# Copyright Troy D. Straszheim
++#
++# Distributed under the Boost Software License, Version 1.0.
++# See http://www.boost.org/LICENSE_1_0.txt
++#
++set(BOOST_CHRONO_EXTRA_SOURCES)
++set(BOOST_CHRONO_LIBRARIES)
++
++boost_add_library(chrono
++  chrono.cpp
++  process_clock.cpp
++  process_cpu_clocks.cpp
++  run_timer.cpp
++  run_timer_static.cpp
++  thread_clock.cpp
++
++  SHARED_COMPILE_FLAGS "-DBOOST_CHRONO_DYN_LINK=1"
++  )
+diff --git a/libs/chrono/test/CMakeLists.txt b/libs/chrono/test/CMakeLists.txt
+new file mode 100644
+index 0000000..d254e93
+--- /dev/null
++++ b/libs/chrono/test/CMakeLists.txt
+@@ -0,0 +1,41 @@
++#
++# Copyright Troy D. Straszheim
++#
++# Distributed under the Boost Software License, Version 1.0.
++# See http://www.boost.org/LICENSE_1_0.txt
++#
++boost_additional_test_dependencies(chrono BOOST_DEPENDS test)
++
++set(CHRONO_LIBRARIES
++  boost_chrono
++  boost_test_exec_monitor)
++
++set(BOOST_TEST_EXEC_MONITOR_SUFFIX "")
++if (NOT BUILD_SINGLE_THREADED)
++  set(BOOST_TEST_EXEC_MONITOR_SUFFIX "-mt")
++endif()
++set(BOOST_TEST_EXEC_MONITOR_SUFFIX "${BOOST_TEST_EXEC_MONITOR_SUFFIX}-static")
++if (NOT BUILD_RELEASE)
++  set(BOOST_TEST_EXEC_MONITOR_SUFFIX "${BOOST_TEST_EXEC_MONITOR_SUFFIX}-debug")
++endif()
++
++macro(chrono_test_run TESTNAME)
++  boost_test_run(${TESTNAME} 
++    STATIC
++    DEPENDS boost_chrono boost_test_exec_monitor )
++  boost_test_run("${TESTNAME}_dll"
++    ${TESTNAME}.cpp
++    SHARED
++    DEPENDS boost_chrono 
++            "boost_test_exec_monitor${BOOST_TEST_EXEC_MONITOR_SUFFIX}")
++endmacro(chrono_test_run)
++
++#
++set(TESTS 
++clock
++duration
++time_point
++traits)
++
++#
++chrono_test_run(run_timer_test) 
 diff --git a/libs/circular_buffer/CMakeLists.txt b/libs/circular_buffer/CMakeLists.txt
 new file mode 100644
 index 0000000..cb2fa50c0
@@ -4038,6 +4151,102 @@ index 0000000..fa210eb
 +++ b/libs/fusion/module.cmake
 @@ -0,0 +1 @@
 +boost_module (fusion DEPENDS function_types)
+\ No newline at end of file
+diff --git a/libs/geometry/CMakeLists.txt b/libs/geometry/CMakeLists.txt
+new file mode 100644
+index 0000000..385a4c6
+--- /dev/null
++++ b/libs/geometry/CMakeLists.txt
+@@ -0,0 +1,23 @@
++#----------------------------------------------------------------------------
++# This file was automatically generated from the original CMakeLists.txt file
++# Add a variable to hold the headers for the library
++set (lib_headers
++    geometry
++)
++
++# Add a library target to the build system
++boost_library_project(
++  geometry
++  TESTDIRS  test 
++  EXAMPLEDIRS example
++  HEADERS ${lib_headers}
++  DOCDIRS doc
++  DESCRIPTION  "Geometry Library."
++  MODULARIZED
++  AUTHORS  "Barend Gehrels <barend - at - xs4all.nl>"
++           "Bruno Lalande <bruno.lalande - at - gmail.com>"
++		   "Mateusz Loskot <mateusz - at - loskot.net>"
++  #  MAINTAINERS 
++)
++
++
+diff --git a/libs/geometry/module.cmake b/libs/geometry/module.cmake
+new file mode 100644
+index 0000000..523adeb
+--- /dev/null
++++ b/libs/geometry/module.cmake
+@@ -0,0 +1 @@
++boost_module(geometry DEPENDS parameter typeof foreach)
+\ No newline at end of file
+diff --git a/libs/geometry/test/CMakeLists.txt b/libs/geometry/test/CMakeLists.txt
+new file mode 100644
+index 0000000..fe1a3ce
+--- /dev/null
++++ b/libs/geometry/test/CMakeLists.txt
+@@ -0,0 +1,52 @@
++# (C) Copyright 2005: Eric Niebler
++# Distributed under the Boost Software License, Version 1.0.
++# (See accompanying file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
++
++# bring in rules for testing
++#import testing ;
++#import feature ;
++
++#feature.feature iterator_debugging
++#  : on off
++# : composite propagated optional
++#  ;
++
++#feature.compose <iterator_debugging>off
++#  : <define>_HAS_ITERATOR_DEBUGGING=0
++#  ;
++
++# project
++#     : requirements
++#       <library>/boost/test//boost_unit_test_framework
++#       <link>static
++#       <include>../../..
++#       <toolset>msvc:<define>_SCL_SECURE_NO_DEPRECATE
++#       # MSVC's iterator debugging causes some tests to run forever.
++#       <toolset>msvc:<iterator_debugging>off
++#       <toolset>intel-win:<iterator_debugging>off
++#     ;
++
++boost_additional_test_dependencies(geometry BOOST_DEPENDS test)
++
++
++set(TESTS 
++core
++point_concept 
++geometries
++arithmetic
++algorithms
++iterators
++strategies
++policies
++util
++views
++multi
++domains)
++
++foreach(TEST ${TESTS})
++  boost_test_run(${TEST} DEPENDS boost_unit_test_framework)
++endforeach(TEST ${TESTS})
++
++if(WIN32)
++  message("Need to turn on iterator debugging")
++endif(WIN32)
 \ No newline at end of file
 diff --git a/libs/gil/CMakeLists.txt b/libs/gil/CMakeLists.txt
 new file mode 100644
@@ -6468,6 +6677,111 @@ index 0000000..b11e21b
 +
 +endif()
 \ No newline at end of file
+diff --git a/libs/phoenix/CMakeLists.txt b/libs/phoenix/CMakeLists.txt
+new file mode 100644
+index 0000000..707857b
+--- /dev/null
++++ b/libs/phoenix/CMakeLists.txt
+@@ -0,0 +1,29 @@
++#
++# Copyright Troy D. Straszheim
++#
++# Distributed under the Boost Software License, Version 1.0.
++# See http://www.boost.org/LICENSE_1_0.txt
++#
++#----------------------------------------------------------------------------
++# This file was automatically generated from the original CMakeLists.txt file
++# Add a variable to hold the headers for the library
++set (lib_headers
++    phoenix
++)
++
++# Add a library target to the build system
++boost_library_project(
++  phoenix
++  #  SRCDIRS 
++  TESTDIRS test
++  HEADERS ${lib_headers}
++  DOCDIRS doc
++  DESCRIPTION  "Define small unnamed function objects at the actual call site, and more."
++  MODULARIZED 
++  AUTHORS  "Joel de Guzman <joel -at- boost-consulting.com>"
++           "Dan Marsden"
++           "Thomas Heller"
++  #  MAINTAINERS 
++)
++
++
+diff --git a/libs/phoenix/module.cmake b/libs/phoenix/module.cmake
+new file mode 100644
+index 0000000..c971b0a
+--- /dev/null
++++ b/libs/phoenix/module.cmake
+@@ -0,0 +1,2 @@
++boost_module(phoenix DEPENDS fusion typeof)
++
+diff --git a/libs/phoenix/test/CMakeLists.txt b/libs/phoenix/test/CMakeLists.txt
+new file mode 100644
+index 0000000..679bbc0
+--- /dev/null
++++ b/libs/phoenix/test/CMakeLists.txt
+@@ -0,0 +1,56 @@
++#
++# Copyright Troy D. Straszheim
++#
++# Distributed under the Boost Software License, Version 1.0.
++# See http://www.boost.org/LICENSE_1_0.txt
++#
++boost_additional_test_dependencies(phoenix BOOST_DEPENDS test)
++
++################################################################################
++#--- Compiler specific settings
++
++# GCC
++IF(CMAKE_COMPILER_IS_GNUCC)
++  SET(test_compile_flags "-ftemplate-depth-1024")
++ENDIF(CMAKE_COMPILER_IS_GNUCC)
++
++# Microsoft Visual Studio
++IF (MSVC71)
++      #TODO// Turn off debug symbols?
++ENDIF(MSVC71)
++IF (MSVC80)
++      SET(test_compile_flags "-D_CRT_SECURE_NO_DEPRECATE -D_SCL_SECURE_NO_DEPRECATE")
++ENDIF(MSVC80)
++IF (MSVC90)
++      SET(test_compile_flags "-D_SCL_SECURE_NO_DEPRECATE")
++ENDIF (MSVC90)
++    
++# Intel 
++IF( ${CMAKE_CXX_COMPILER} MATCHES "icpc" )
++    #TODO// Turn off debug symbols?
++ENDIF( ${CMAKE_CXX_COMPILER} MATCHES "icpc" )
++
++set(TESTS 
++algorithm
++bll_compatibility
++bind
++boost_bind_compatibility
++container
++core
++function
++include
++object
++operator
++regression
++scope
++statement
++stdlib)
++
++foreach(TEST ${TESTS})
++  boost_test_run(${TEST} DEPENDS boost_unit_test_framework)
++endforeach(TEST ${TESTS})
++
++if(WIN32)
++  message("Need to turn on iterator debugging")
++endif(WIN32)
++
 diff --git a/libs/polygon/CMakeLists.txt b/libs/polygon/CMakeLists.txt
 new file mode 100644
 index 0000000..ce3b9da
@@ -6891,7 +7205,7 @@ index 0000000..d94092d
 +  DEPENDS boost_serialization SHARED)
 diff --git a/libs/proto/CMakeLists.txt b/libs/proto/CMakeLists.txt
 new file mode 100644
-index 0000000..36d5060
+index 0000000..dc61c1a
 --- /dev/null
 +++ b/libs/proto/CMakeLists.txt
 @@ -0,0 +1,27 @@
@@ -6915,9 +7229,9 @@ index 0000000..36d5060
 +  TESTDIRS test
 +  HEADERS ${lib_headers}
 +  DOCDIRS doc
-+  # DESCRIPTION  "Helps Boost library developers adapt to compiler idiosyncrasies; not intended for library users."
++  DESCRIPTION  "Expression template library and compiler construction toolkit for domain-specific embedded languages."
 +  MODULARIZED 
-+  # AUTHORS  "John Maddock <john -at- johnmaddock.co.uk>"
++  AUTHORS  "Eric Niebler <eric -at- boost-consulting.com>"
 +  #  MAINTAINERS 
 +)
 +
@@ -7641,6 +7955,74 @@ index 0000000..0907adc
 +boost_test_run(reversible_range DEPENDS boost_unit_test_framework COMPILE_FLAGS ${test_compile_flags})
 +boost_test_run(const_ranges DEPENDS boost_unit_test_framework COMPILE_FLAGS ${test_compile_flags})
 +boost_test_run(extension_mechanism DEPENDS boost_unit_test_framework COMPILE_FLAGS ${test_compile_flags})
+diff --git a/libs/ratio/CMakeLists.txt b/libs/ratio/CMakeLists.txt
+new file mode 100644
+index 0000000..e72ac71
+--- /dev/null
++++ b/libs/ratio/CMakeLists.txt
+@@ -0,0 +1,21 @@
++#----------------------------------------------------------------------------
++# This file was automatically generated from the original CMakeLists.txt file
++# Add a variable to hold the headers for the library
++set (lib_headers
++    ratio
++)
++
++# Add a library target to the build system
++boost_library_project(
++  ratio
++  TESTDIRS  test 
++  EXAMPLEDIRS example
++  HEADERS ${lib_headers}
++  DOCDIRS doc
++  DESCRIPTION  "Compile time rational arithmetic."
++  MODULARIZED
++  AUTHORS  "Vicente J. Botet Escribá <vicente.botet - at - wanadoo.fr>"
++  #  MAINTAINERS 
++)
++
++
+diff --git a/libs/ratio/module.cmake b/libs/ratio/module.cmake
+new file mode 100644
+index 0000000..4448f13
+--- /dev/null
++++ b/libs/ratio/module.cmake
+@@ -0,0 +1 @@
++boost_module(ratio DEPENDS parameter typeof foreach)
+\ No newline at end of file
+diff --git a/libs/ratio/test/CMakeLists.txt b/libs/ratio/test/CMakeLists.txt
+new file mode 100644
+index 0000000..2efdaf1
+--- /dev/null
++++ b/libs/ratio/test/CMakeLists.txt
+@@ -0,0 +1,27 @@
++#
++# Copyright Troy D. Straszheim
++#
++# Distributed under the Boost Software License, Version 1.0.
++# See http://www.boost.org/LICENSE_1_0.txt
++#
++boost_additional_test_dependencies(ratio BOOST_DEPENDS test)
++
++#
++set(TESTS 
++ratio_arithmetic
++ratio_comparison
++ratio_extensions
++ratio_io
++ratio_ratio)
++
++foreach(TEST ${TESTS})
++  boost_test_run(${TEST} DEPENDS boost_unit_test_framework)
++endforeach(TEST ${TESTS})
++
++if(WIN32)
++  message("Need to turn on iterator debugging")
++endif(WIN32)
++
++#
++ratio_test_run(ratio_test) 
++ratio_test_run(typedefs_pass) 
 diff --git a/libs/rational/CMakeLists.txt b/libs/rational/CMakeLists.txt
 new file mode 100644
 index 0000000..53c440d
@@ -37762,9 +38144,6 @@ index 0000000..594a34d
 +)
 +
 +
-diff --git a/tools/build/CMake/test/libs/c/module.cmake b/tools/build/CMake/test/libs/c/module.cmake
-new file mode 100644
-index 0000000..e69de29
 diff --git a/tools/build/CMake/test/libs/c/src/CMakeLists.txt b/tools/build/CMake/test/libs/c/src/CMakeLists.txt
 new file mode 100644
 index 0000000..cfc4752
@@ -37907,9 +38286,6 @@ index 0000000..5cff225
 +)
 +
 +
-diff --git a/tools/build/CMake/test/libs/d/module.cmake b/tools/build/CMake/test/libs/d/module.cmake
-new file mode 100644
-index 0000000..e69de29
 diff --git a/tools/build/CMake/test/libs/d/src/CMakeLists.txt b/tools/build/CMake/test/libs/d/src/CMakeLists.txt
 new file mode 100644
 index 0000000..aaba81f

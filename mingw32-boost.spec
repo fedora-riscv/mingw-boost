@@ -56,7 +56,6 @@ BuildRequires:  mingw32-zlib
 BuildRequires:  mingw32-expat
 BuildRequires:  mingw32-pthreads
 BuildRequires:  perl
-BuildRequires:  chrpath
 # These are required by the native package:
 #BuildRequires:  mingw32-python
 #BuildRequires:  mingw32-libicu

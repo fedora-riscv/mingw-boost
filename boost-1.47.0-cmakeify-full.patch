@@ -2390,7 +2390,7 @@ new file mode 100644
 index 0000000..b13377a
 --- /dev/null
 +++ b/libs/chrono/src/CMakeLists.txt
-@@ -0,0 +1,19 @@
+@@ -0,0 +1,20 @@
 +#
 +# Copyright Troy D. Straszheim
 +#
@@ -2409,6 +2409,7 @@ index 0000000..b13377a
 +  thread_clock.cpp
 +
 +  SHARED_COMPILE_FLAGS "-DBOOST_CHRONO_DYN_LINK=1"
++  DEPENDS boost_system
 +  )
 diff --git a/libs/chrono/test/CMakeLists.txt b/libs/chrono/test/CMakeLists.txt
 new file mode 100644

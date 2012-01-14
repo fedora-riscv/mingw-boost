@@ -63,6 +63,7 @@ Patch7:         boost-1.48.0-foreach.patch
 Patch8:         boost-1.48.0-gcc47-pthreads.patch
 
 Patch9:         boost-1.48.0-mingw32.patch
+Patch10:        boost-1.48.0-gcc47-winthreads.patch
 
 BuildArch:      noarch
 
@@ -118,6 +119,7 @@ sed 's/_FEDORA_SONAME/%{sonamever}/' %{PATCH1} | %{__patch} -p0 --fuzz=0
 %patch7 -p2
 %patch8 -p0
 %patch9 -p0 -b .mingw32
+%patch10 -p0 -b .gcc47wt
 
 %build
 # Support for building tests.

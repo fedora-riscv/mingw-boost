@@ -62,6 +62,8 @@ Patch7:         boost-1.48.0-foreach.patch
 # https://svn.boost.org/trac/boost/ticket/6165
 Patch8:         boost-1.48.0-gcc47-pthreads.patch
 
+Patch9:         boost-1.48.0-mingw32.patch
+
 BuildArch:      noarch
 
 BuildRequires:  cmake
@@ -115,6 +117,7 @@ sed 's/_FEDORA_SONAME/%{sonamever}/' %{PATCH1} | %{__patch} -p0 --fuzz=0
 %patch6 -p1
 %patch7 -p2
 %patch8 -p0
+%patch9 -p0 -b .mingw32
 
 %build
 # Support for building tests.

@@ -12,7 +12,7 @@ Version:        1.48.0
 %define version_enc 1_48_0
 %global dllboostver 1_48
 %global dllgccver gcc47
-Release:        1%{?dist}
+Release:        2%{?dist}
 Summary:        MinGW Windows port of Boost C++ Libraries
 
 License:        Boost
@@ -62,11 +62,8 @@ Patch7:         boost-1.48.0-foreach.patch
 # https://svn.boost.org/trac/boost/ticket/6165
 Patch8:         boost-1.48.0-gcc47-pthreads.patch
 
-# https://bugzilla.redhat.com/show_bug.cgi?id=781751
-Patch9:         boost-1.48.0-mingw32.patch
-
 # https://svn.boost.org/trac/boost/ticket/6165
-Patch10:        boost-1.48.0-gcc47-winthreads.patch
+Patch9:         boost-1.48.0-gcc47-winthreads.patch
 
 BuildArch:      noarch
 
@@ -121,8 +118,7 @@ sed 's/_FEDORA_SONAME/%{sonamever}/' %{PATCH1} | %{__patch} -p0 --fuzz=0
 %patch6 -p1
 %patch7 -p2
 %patch8 -p0
-%patch9 -p0 -b .mingw32
-%patch10 -p0 -b .gcc47wt
+%patch9 -p0 -b .gcc47wt
 
 %build
 # Support for building tests.
@@ -448,6 +444,9 @@ rm -rf $RPM_BUILD_ROOT
 
 
 %changelog
+* Sat Jan 14 2012 Thomas Sailer <t.sailer@alumni.ethz.ch> - 1.48.0-2
+- update cmakeify patch
+
 * Sat Jan 14 2012 Thomas Sailer <t.sailer@alumni.ethz.ch> - 1.48.0-1
 - update to 1.48.0
 

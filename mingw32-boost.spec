@@ -8,11 +8,11 @@
 %global name1 boost
 
 Name:           mingw32-%{name1}
-Version:        1.47.0
-%global version_enc 1_47_0
-%global dllboostver 1_47
-%global dllgccver gcc46
-Release:        2%{?dist}
+Version:        1.48.0
+%define version_enc 1_48_0
+%global dllboostver 1_48
+%global dllgccver gcc47
+Release:        1%{?dist}
 Summary:        MinGW Windows port of Boost C++ Libraries
 
 License:        Boost
@@ -21,27 +21,46 @@ Group:          Development/Libraries
 # added on top of the official Boost release (http://www.boost.org), thanks to
 # a dedicated patch. That CMake framework (and patch) is hosted and maintained
 # on GitHub, for now in the following Git repository:
-#   https://github.com/boost-lib/boost-cmake
+#   https://github.com/pocb/boost.git
 # A clone also exists on Gitorious, where CMake-related work was formely done:
 #   http://gitorious.org/boost/cmake
 # Upstream work is synchronised thanks to the Ryppl's hosted Git clone:
 #   https://github.com/ryppl/boost-svn/tree/trunk
 %define toplev_dirname %{name1}_%{version_enc}
 URL:            http://www.boost.org
-Source:         http://downloads.sourceforge.net/%{name1}/%{toplev_dirname}.tar.bz2
+Source0:        http://downloads.sourceforge.net/%{name}/%{toplev_dirname}.tar.bz2
 
 # CMake-related files (CMakeLists.txt and module.cmake files).
 # That patch also contains Web-related documentation for the Trac Wiki
 # devoted to "old" Boost-CMake (up-to-date until Boost-1.41.0).
-Patch0:         boost-1.47.0-cmakeify-full.patch
+Patch0:         boost-1.48.0-cmakeify-full.patch
 Patch1:         boost-cmake-soname.patch
 
 # The patch may break c++03, and there is therefore no plan yet to include
 # it upstream: https://svn.boost.org/trac/boost/ticket/4999
-Patch2:         boost-1.47.0-signals-erase.patch
+Patch2:         boost-1.48.0-signals-erase.patch
 
 # https://svn.boost.org/trac/boost/ticket/5731
-Patch3:         boost-1.47.0-exceptions.patch
+Patch3:         boost-1.48.0-exceptions.patch
+
+# https://svn.boost.org/trac/boost/ticket/6150
+Patch4:         boost-1.48.0-fix-non-utf8-files.patch
+
+# Add a manual page for the sole executable, namely bjam, based on the
+# on-line documentation:
+# http://www.boost.org/boost-build2/doc/html/bbv2/overview.html
+Patch5:         boost-1.48.0-add-bjam-man-page.patch
+
+# https://bugzilla.redhat.com/show_bug.cgi?id=757385
+# https://svn.boost.org/trac/boost/ticket/6182
+Patch6:         boost-1.48.0-lexical_cast-incomplete.patch
+
+# https://bugzilla.redhat.com/show_bug.cgi?id=756005
+# https://svn.boost.org/trac/boost/ticket/6131
+Patch7:         boost-1.48.0-foreach.patch
+
+# https://svn.boost.org/trac/boost/ticket/6165
+Patch8:         boost-1.48.0-gcc47-pthreads.patch
 
 BuildArch:      noarch
 
@@ -88,9 +107,14 @@ Static version of the MinGW Windows Boost C++ library.
 %patch0 -p1
 sed 's/_FEDORA_SONAME/%{sonamever}/' %{PATCH1} | %{__patch} -p0 --fuzz=0
 
-# fixes
+# Fixes
 %patch2 -p1
 %patch3 -p0
+%patch4 -p1
+%patch5 -p1
+%patch6 -p1
+%patch7 -p2
+%patch8 -p0
 
 %build
 # Support for building tests.
@@ -232,6 +256,10 @@ rm -rf $RPM_BUILD_ROOT
 %{_mingw32_libdir}/libboost_thread-%{dllgccver}-mt-%{dllboostver}.dll.a
 %{_mingw32_bindir}/boost_thread-%{dllgccver}-mt-d-%{dllboostver}.dll
 %{_mingw32_libdir}/libboost_thread-%{dllgccver}-mt-d-%{dllboostver}.dll.a
+%{_mingw32_bindir}/boost_timer-%{dllgccver}-mt-%{dllboostver}.dll
+%{_mingw32_libdir}/libboost_timer-%{dllgccver}-mt-%{dllboostver}.dll.a
+%{_mingw32_bindir}/boost_timer-%{dllgccver}-mt-d-%{dllboostver}.dll
+%{_mingw32_libdir}/libboost_timer-%{dllgccver}-mt-d-%{dllboostver}.dll.a
 %{_mingw32_bindir}/boost_unit_test_framework-%{dllgccver}-%{dllboostver}.dll
 %{_mingw32_libdir}/libboost_unit_test_framework-%{dllgccver}-%{dllboostver}.dll.a
 %{_mingw32_bindir}/boost_unit_test_framework-%{dllgccver}-d-%{dllboostver}.dll
@@ -305,6 +333,10 @@ rm -rf $RPM_BUILD_ROOT
 %{_mingw32_libdir}/libboost_test_exec_monitor-%{dllgccver}-d-%{dllboostver}.a
 %{_mingw32_libdir}/libboost_test_exec_monitor-%{dllgccver}-mt-%{dllboostver}.a
 %{_mingw32_libdir}/libboost_test_exec_monitor-%{dllgccver}-mt-d-%{dllboostver}.a
+%{_mingw32_libdir}/libboost_timer-%{dllgccver}-%{dllboostver}.a
+%{_mingw32_libdir}/libboost_timer-%{dllgccver}-d-%{dllboostver}.a
+%{_mingw32_libdir}/libboost_timer-%{dllgccver}-mt-%{dllboostver}.a
+%{_mingw32_libdir}/libboost_timer-%{dllgccver}-mt-d-%{dllboostver}.a
 %{_mingw32_libdir}/libboost_thread-%{dllgccver}-mt-%{dllboostver}.a
 %{_mingw32_libdir}/libboost_thread-%{dllgccver}-mt-d-%{dllboostver}.a
 %{_mingw32_libdir}/libboost_unit_test_framework-%{dllgccver}-%{dllboostver}.a
@@ -320,6 +352,9 @@ rm -rf $RPM_BUILD_ROOT
 
 
 %changelog
+* Sat Jan 14 2012 Thomas Sailer <t.sailer@alumni.ethz.ch> - 1.48.0-1
+- update to 1.48.0
+
 * Fri Jan 13 2012 Fedora Release Engineering <rel-eng@lists.fedoraproject.org> - 1.47.0-2
 - Rebuilt for https://fedoraproject.org/wiki/Fedora_17_Mass_Rebuild
 

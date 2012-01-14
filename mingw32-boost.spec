@@ -62,7 +62,10 @@ Patch7:         boost-1.48.0-foreach.patch
 # https://svn.boost.org/trac/boost/ticket/6165
 Patch8:         boost-1.48.0-gcc47-pthreads.patch
 
+# mail to Denis Arnaud, 1326570385.28185.2.camel@playstation.localdomain
 Patch9:         boost-1.48.0-mingw32.patch
+
+# https://svn.boost.org/trac/boost/ticket/6165
 Patch10:        boost-1.48.0-gcc47-winthreads.patch
 
 BuildArch:      noarch

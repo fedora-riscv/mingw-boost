@@ -12,7 +12,7 @@ Version:        1.48.0
 %define version_enc 1_48_0
 %global dllboostver 1_48
 %global dllgccver gcc47
-Release:        2%{?dist}
+Release:        3%{?dist}
 Summary:        MinGW Windows port of Boost C++ Libraries
 
 License:        Boost
@@ -67,6 +67,10 @@ Patch9:         boost-1.48.0-gcc47-winthreads.patch
 
 # https://bugzilla.redhat.com/show_bug.cgi?id=781751
 Patch10:        boost-1.48.0-mingw32.patch
+
+# Make sure the boost dll's are installed in %{mingw32_bindir}
+# instead of %{mingw32_libdir}
+Patch11:        boost-install-dlls-to-bindir.patch
 
 BuildArch:      noarch
 
@@ -123,6 +127,7 @@ sed 's/_FEDORA_SONAME/%{sonamever}/' %{PATCH1} | %{__patch} -p0 --fuzz=0
 %patch8 -p0
 %patch9 -p0 -b .gcc47wt
 %patch10 -p0 -b .mingw32
+%patch11 -p0 -b .bindir
 
 %build
 # Support for building tests.
@@ -147,14 +152,11 @@ DESTDIR=$RPM_BUILD_ROOT make -C serial VERBOSE=1 install
 # Kill any debug library versions that may show up un-invited.
 %{__rm} -f $RPM_BUILD_ROOT/%{_libdir}/*-d.*
 # Remove cmake configuration files used to build the Boost libraries
-find $RPM_BUILD_ROOT/%{_mingw32_libdir} -name '*.cmake' -exec %{__rm} -f {} \;
+find $RPM_BUILD_ROOT -name '*.cmake' -exec %{__rm} -f {} \;
 
 # Remove scripts used to generate include files
 find $RPM_BUILD_ROOT%{_mingw32_includedir}/ \( -name '*.pl' -o -name '*.sh' \) -exec %{__rm} -f {} \;
 
-# Move DLL's to bindir
-%{__install} -d $RPM_BUILD_ROOT $RPM_BUILD_ROOT%{_mingw32_bindir}
-mv $RPM_BUILD_ROOT%{_mingw32_libdir}/boost*.dll $RPM_BUILD_ROOT%{_mingw32_bindir}
 
 %clean
 rm -rf $RPM_BUILD_ROOT
@@ -348,8 +350,6 @@ rm -rf $RPM_BUILD_ROOT
 %{_mingw32_libdir}/libboost_wserialization-%{dllgccver}-mt-%{dllboostver}.dll.a
 %{_mingw32_bindir}/boost_wserialization-%{dllgccver}-mt-d-%{dllboostver}.dll
 %{_mingw32_libdir}/libboost_wserialization-%{dllgccver}-mt-d-%{dllboostver}.dll.a
-%{_mingw32_datadir}/%{name1}-%{version}
-%{_mingw32_datadir}/cmake/%{name1}
 
 %files static
 %defattr(-,root,root,-)
@@ -448,6 +448,14 @@ rm -rf $RPM_BUILD_ROOT
 
 
 %changelog
+* Fri Feb 10 2012 Erik van Pienbroek <epienbro@fedoraproject.org> - 1.48.0-3
+- Don't provide the cmake files any more as they are broken and cmake
+  itself already provides its own boost detection mechanism.
+  Should fix detection of boost by mingw32-qpid-cpp. RHBZ #597020, RHBZ #789399
+- Added patch which makes boost install dll's to %%{_mingw32_bindir}
+  instead of %%{_mingw32_libdir}. The hack in the %%install section
+  to manually move the dll's is dropped now
+
 * Sat Jan 14 2012 Thomas Sailer <t.sailer@alumni.ethz.ch> - 1.48.0-2
 - update cmakeify patch
 

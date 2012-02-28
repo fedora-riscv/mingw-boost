@@ -12,7 +12,7 @@ Version:        1.48.0
 %define version_enc 1_48_0
 %global dllboostver 1_48
 %global dllgccver gcc47
-Release:        3%{?dist}
+Release:        4%{?dist}
 Summary:        MinGW Windows port of Boost C++ Libraries
 
 License:        Boost
@@ -448,6 +448,9 @@ rm -rf $RPM_BUILD_ROOT
 
 
 %changelog
+* Tue Feb 28 2012 Erik van Pienbroek <epienbro@fedoraproject.org> - 1.48.0-4
+- Rebuild against the mingw-w64 toolchain
+
 * Fri Feb 10 2012 Erik van Pienbroek <epienbro@fedoraproject.org> - 1.48.0-3
 - Don't provide the cmake files any more as they are broken and cmake
   itself already provides its own boost detection mechanism.

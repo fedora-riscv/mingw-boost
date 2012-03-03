@@ -12,7 +12,7 @@ Version:        1.48.0
 %define version_enc 1_48_0
 %global dllboostver 1_48
 %global dllgccver gcc47
-Release:        4%{?dist}
+Release:        5%{?dist}
 Summary:        MinGW Windows port of Boost C++ Libraries
 
 License:        Boost
@@ -72,6 +72,11 @@ Patch10:        boost-1.48.0-mingw32.patch
 # instead of %{mingw32_libdir}
 Patch11:        boost-install-dlls-to-bindir.patch
 
+# Fix compilation when using c++11 mode
+# https://bugzilla.redhat.com/show_bug.cgi?id=799332
+# https://svn.boost.org/trac/boost/changeset/75396
+Patch12:        changeset_75396.diff
+
 BuildArch:      noarch
 
 BuildRequires:  cmake
@@ -128,6 +133,8 @@ sed 's/_FEDORA_SONAME/%{sonamever}/' %{PATCH1} | %{__patch} -p0 --fuzz=0
 %patch9 -p0 -b .gcc47wt
 %patch10 -p0 -b .mingw32
 %patch11 -p0 -b .bindir
+%patch12 -p1 -b .c++11
+
 
 %build
 # Support for building tests.
@@ -448,6 +455,9 @@ rm -rf $RPM_BUILD_ROOT
 
 
 %changelog
+* Sat Mar  3 2012 Erik van Pienbroek <epienbro@fedoraproject.org> - 1.48.0-5
+- Fix compilation failure when including interlocked.hpp in c++11 mode (RHBZ #799332)
+
 * Tue Feb 28 2012 Erik van Pienbroek <epienbro@fedoraproject.org> - 1.48.0-4
 - Rebuild against the mingw-w64 toolchain
 

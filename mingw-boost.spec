@@ -7,12 +7,12 @@
 
 %global name1 boost
 
-Name:           mingw32-%{name1}
+Name:           mingw-%{name1}
 Version:        1.48.0
 %define version_enc 1_48_0
 %global dllboostver 1_48
 %global dllgccver gcc47
-Release:        5%{?dist}
+Release:        6%{?dist}
 Summary:        MinGW Windows port of Boost C++ Libraries
 
 License:        Boost
@@ -104,12 +104,24 @@ libraries are suitable for eventual standardization. (Some of the
 libraries have already been proposed for inclusion in the C++
 Standards Committee's upcoming C++ Standard Library Technical Report.)
 
-%package static
+%package -n mingw32-boost
+Summary:         MinGW Windows zlib compression library for the win32 target
+
+%description -n mingw32-boost
+Boost provides free peer-reviewed portable C++ source libraries.  The
+emphasis is on libraries which work well with the C++ Standard
+Library, in the hopes of establishing "existing practice" for
+extensions and providing reference implementations so that the Boost
+libraries are suitable for eventual standardization. (Some of the
+libraries have already been proposed for inclusion in the C++
+Standards Committee's upcoming C++ Standard Library Technical Report.)
+
+%package -n mingw32-boost-static
 Summary:        Static version of the MinGW Windows Boost C++ library
-Requires:       %{name} = %{version}-%{release}
+Requires:       mingw32-boost = %{version}-%{release}
 Group:          Development/Libraries
 
-%description static
+%description -n mingw32-boost-static
 Static version of the MinGW Windows Boost C++ library.
 
 
@@ -169,7 +181,7 @@ find $RPM_BUILD_ROOT%{_mingw32_includedir}/ \( -name '*.pl' -o -name '*.sh' \) -
 rm -rf $RPM_BUILD_ROOT
 
 
-%files
+%files -n mingw32-boost
 %defattr(-,root,root,-)
 %doc LICENSE_1_0.txt
 %{_mingw32_includedir}/boost
@@ -358,7 +370,7 @@ rm -rf $RPM_BUILD_ROOT
 %{_mingw32_bindir}/boost_wserialization-%{dllgccver}-mt-d-%{dllboostver}.dll
 %{_mingw32_libdir}/libboost_wserialization-%{dllgccver}-mt-d-%{dllboostver}.dll.a
 
-%files static
+%files -n mingw32-boost-static
 %defattr(-,root,root,-)
 %{_mingw32_libdir}/libboost_chrono-%{dllgccver}-%{dllboostver}.a
 %{_mingw32_libdir}/libboost_chrono-%{dllgccver}-d-%{dllboostver}.a
@@ -455,6 +467,9 @@ rm -rf $RPM_BUILD_ROOT
 
 
 %changelog
+* Wed Mar 07 2012 Erik van Pienbroek <epienbro@fedoraproject.org> - 1.48.0-6
+- Renamed the source package to mingw-boost (RHBZ #800845)
+
 * Sat Mar  3 2012 Erik van Pienbroek <epienbro@fedoraproject.org> - 1.48.0-5
 - Fix compilation failure when including interlocked.hpp in c++11 mode (RHBZ #799332)
 

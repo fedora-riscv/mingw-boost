@@ -122,7 +122,7 @@ Static version of the MinGW Windows Boost C++ library.
 %{mingw32_debug_package}
 
 %prep
-%setup -q -n %{toplev_dirname}
+%setup -q -n boost_%{version_enc}
 
 # CMake framework (CMakeLists.txt, *.cmake and documentation files)
 %patch0 -p1

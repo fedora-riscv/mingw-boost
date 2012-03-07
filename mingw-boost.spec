@@ -5,9 +5,7 @@
 %global __find_provides %{_mingw32_findprovides}
 %define __debug_install_post %{_mingw32_debug_install_post}
 
-%global name1 boost
-
-Name:           mingw-%{name1}
+Name:           mingw-boost
 Version:        1.48.0
 %define version_enc 1_48_0
 %global dllboostver 1_48
@@ -26,9 +24,8 @@ Group:          Development/Libraries
 #   http://gitorious.org/boost/cmake
 # Upstream work is synchronised thanks to the Ryppl's hosted Git clone:
 #   https://github.com/ryppl/boost-svn/tree/trunk
-%define toplev_dirname %{name1}_%{version_enc}
 URL:            http://www.boost.org
-Source0:        http://downloads.sourceforge.net/%{name}/%{toplev_dirname}.tar.bz2
+Source0:        http://downloads.sourceforge.net/boost/boost_%{version_enc}.tar.bz2
 
 # CMake-related files (CMakeLists.txt and module.cmake files).
 # That patch also contains Web-related documentation for the Trac Wiki
@@ -469,6 +466,7 @@ rm -rf $RPM_BUILD_ROOT
 %changelog
 * Wed Mar 07 2012 Erik van Pienbroek <epienbro@fedoraproject.org> - 1.48.0-6
 - Renamed the source package to mingw-boost (RHBZ #800845)
+- Fixed source URL
 
 * Sat Mar  3 2012 Erik van Pienbroek <epienbro@fedoraproject.org> - 1.48.0-5
 - Fix compilation failure when including interlocked.hpp in c++11 mode (RHBZ #799332)

@@ -1,8 +1,5 @@
 %global __strip %{mingw32_strip}
 %global __objdump %{mingw32_objdump}
-%global _use_internal_dependency_generator 0
-%global __find_requires %{mingw32_findrequires}
-%global __find_provides %{mingw32_findprovides}
 %define __debug_install_post %{mingw32_debug_install_post}
 
 Name:           mingw-boost
@@ -161,8 +158,6 @@ sed 's/_FEDORA_SONAME/%{sonamever}/' %{PATCH1} | %{__patch} -p0 --fuzz=0
 )
 
 %install
-%{__rm} -rf $RPM_BUILD_ROOT
-
 echo ============================= install serial ==================
 DESTDIR=$RPM_BUILD_ROOT make -C serial VERBOSE=1 install
 # Kill any debug library versions that may show up un-invited.
@@ -174,12 +169,7 @@ find $RPM_BUILD_ROOT -name '*.cmake' -exec %{__rm} -f {} \;
 find $RPM_BUILD_ROOT%{mingw32_includedir}/ \( -name '*.pl' -o -name '*.sh' \) -exec %{__rm} -f {} \;
 
 
-%clean
-rm -rf $RPM_BUILD_ROOT
-
-
 %files -n mingw32-boost
-%defattr(-,root,root,-)
 %doc LICENSE_1_0.txt
 %{mingw32_includedir}/boost
 %{mingw32_bindir}/boost_chrono-%{dllgccver}-%{dllboostver}.dll
@@ -368,7 +358,6 @@ rm -rf $RPM_BUILD_ROOT
 %{mingw32_libdir}/libboost_wserialization-%{dllgccver}-mt-d-%{dllboostver}.dll.a
 
 %files -n mingw32-boost-static
-%defattr(-,root,root,-)
 %{mingw32_libdir}/libboost_chrono-%{dllgccver}-%{dllboostver}.a
 %{mingw32_libdir}/libboost_chrono-%{dllgccver}-d-%{dllboostver}.a
 %{mingw32_libdir}/libboost_chrono-%{dllgccver}-mt-%{dllboostver}.a
@@ -468,6 +457,7 @@ rm -rf $RPM_BUILD_ROOT
 - Renamed the source package to mingw-boost (RHBZ #800845)
 - Fixed source URL
 - Use mingw macros without leading underscore
+- Dropped unneeded RPM tags
 
 * Sat Mar  3 2012 Erik van Pienbroek <epienbro@fedoraproject.org> - 1.48.0-5
 - Fix compilation failure when including interlocked.hpp in c++11 mode (RHBZ #799332)

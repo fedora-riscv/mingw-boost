@@ -1,13 +1,14 @@
-%global __strip %{mingw32_strip}
-%global __objdump %{mingw32_objdump}
-%define __debug_install_post %{mingw32_debug_install_post}
+%?mingw_package_header
+
+%global mingw_build_win32 1
+%global mingw_build_win64 1
 
 Name:           mingw-boost
 Version:        1.48.0
-%define version_enc 1_48_0
+%global version_enc 1_48_0
 %global dllboostver 1_48
 %global dllgccver gcc47
-Release:        6%{?dist}
+Release:        7%{?dist}
 Summary:        MinGW Windows port of Boost C++ Libraries
 
 License:        Boost
@@ -71,11 +72,16 @@ Patch11:        boost-install-dlls-to-bindir.patch
 # https://svn.boost.org/trac/boost/changeset/75396
 Patch12:        changeset_75396.diff
 
+# When performing an out of source build, make sure all
+# generated files end up in the build prefix instead of
+# the source prefix
+Patch13:        boost-fix-out-of-source-builds.patch
+
 BuildArch:      noarch
 
 BuildRequires:  cmake
 BuildRequires:  file
-BuildRequires:  mingw32-filesystem >= 52
+BuildRequires:  mingw32-filesystem >= 95
 BuildRequires:  mingw32-gcc
 BuildRequires:  mingw32-gcc-c++
 BuildRequires:  mingw32-binutils
@@ -83,10 +89,22 @@ BuildRequires:  mingw32-bzip2
 BuildRequires:  mingw32-zlib
 BuildRequires:  mingw32-expat
 BuildRequires:  mingw32-pthreads
+
+BuildRequires:  mingw64-filesystem >= 95
+BuildRequires:  mingw64-gcc
+BuildRequires:  mingw64-gcc-c++
+BuildRequires:  mingw64-binutils
+BuildRequires:  mingw64-bzip2
+BuildRequires:  mingw64-zlib
+BuildRequires:  mingw64-expat
+BuildRequires:  mingw64-pthreads
+
 BuildRequires:  perl
 # These are required by the native package:
 #BuildRequires:  mingw32-python
 #BuildRequires:  mingw32-libicu
+#BuildRequires:  mingw64-python
+#BuildRequires:  mingw64-libicu
 
 
 %description
@@ -98,6 +116,7 @@ libraries are suitable for eventual standardization. (Some of the
 libraries have already been proposed for inclusion in the C++
 Standards Committee's upcoming C++ Standard Library Technical Report.)
 
+# Win32
 %package -n mingw32-boost
 Summary:         MinGW Windows zlib compression library for the win32 target
 
@@ -113,13 +132,33 @@ Standards Committee's upcoming C++ Standard Library Technical Report.)
 %package -n mingw32-boost-static
 Summary:        Static version of the MinGW Windows Boost C++ library
 Requires:       mingw32-boost = %{version}-%{release}
-Group:          Development/Libraries
 
 %description -n mingw32-boost-static
 Static version of the MinGW Windows Boost C++ library.
 
+# Win64
+%package -n mingw64-boost
+Summary:         MinGW Windows zlib compression library for the win32 target
 
-%{mingw32_debug_package}
+%description -n mingw64-boost
+Boost provides free peer-reviewed portable C++ source libraries.  The
+emphasis is on libraries which work well with the C++ Standard
+Library, in the hopes of establishing "existing practice" for
+extensions and providing reference implementations so that the Boost
+libraries are suitable for eventual standardization. (Some of the
+libraries have already been proposed for inclusion in the C++
+Standards Committee's upcoming C++ Standard Library Technical Report.)
+
+%package -n mingw64-boost-static
+Summary:        Static version of the MinGW Windows Boost C++ library
+Requires:       mingw64-boost = %{version}-%{release}
+
+%description -n mingw64-boost-static
+Static version of the MinGW Windows Boost C++ library.
+
+
+%?mingw_debug_package
+
 
 %prep
 %setup -q -n boost_%{version_enc}
@@ -140,35 +179,41 @@ sed 's/_FEDORA_SONAME/%{sonamever}/' %{PATCH1} | %{__patch} -p0 --fuzz=0
 %patch10 -p0 -b .mingw32
 %patch11 -p0 -b .bindir
 %patch12 -p1 -b .c++11
+%patch13 -p0 -b .out_of_source
 
 
 %build
 # Support for building tests.
 %global boost_testflags -DBUILD_TESTS="NONE"
 
-( echo ============================= build serial ==================
-  mkdir serial
-  cd serial
-  %mingw32_cmake  -DCMAKE_BUILD_TYPE=RelWithDebInfo %{boost_testflags} \
-                  -DENABLE_SINGLE_THREADED=YES -DINSTALL_VERSIONED=OFF \
-                  -DWITH_MPI=OFF \
-                  -DCMAKE_CXX_FLAGS="%{mingw32_cflags} -DBOOST_IOSTREAMS_USE_DEPRECATED" \
-                  ..
-  make VERBOSE=1 %{?_smp_mflags}
-)
+%mingw_cmake  -DCMAKE_BUILD_TYPE=RelWithDebInfo \
+              %{boost_testflags} \
+              -DENABLE_SINGLE_THREADED=YES \
+              -DINSTALL_VERSIONED=OFF \
+              -DCMAKE_CXX_FLAGS=-DBOOST_IOSTREAMS_USE_DEPRECATED \
+              -DWITH_MPI=OFF \
+              -DBOOST_EXPORTS_INSTALL_DIR:STRING=share/cmake/boost/ \
+              ..
+%mingw_make VERBOSE=1 %{?_smp_mflags}
+
 
 %install
-echo ============================= install serial ==================
-DESTDIR=$RPM_BUILD_ROOT make -C serial VERBOSE=1 install
+%mingw_make_install DESTDIR=$RPM_BUILD_ROOT
+
 # Kill any debug library versions that may show up un-invited.
 %{__rm} -f $RPM_BUILD_ROOT/%{_libdir}/*-d.*
+%{__rm} -f $RPM_BUILD_ROOT/%{mingw32_libdir}/*-d.*
+%{__rm} -f $RPM_BUILD_ROOT/%{mingw64_libdir}/*-d.*
+
 # Remove cmake configuration files used to build the Boost libraries
 find $RPM_BUILD_ROOT -name '*.cmake' -exec %{__rm} -f {} \;
 
 # Remove scripts used to generate include files
 find $RPM_BUILD_ROOT%{mingw32_includedir}/ \( -name '*.pl' -o -name '*.sh' \) -exec %{__rm} -f {} \;
+find $RPM_BUILD_ROOT%{mingw64_includedir}/ \( -name '*.pl' -o -name '*.sh' \) -exec %{__rm} -f {} \;
 
 
+# Win32
 %files -n mingw32-boost
 %doc LICENSE_1_0.txt
 %{mingw32_includedir}/boost
@@ -451,8 +496,294 @@ find $RPM_BUILD_ROOT%{mingw32_includedir}/ \( -name '*.pl' -o -name '*.sh' \) -e
 %{mingw32_libdir}/libboost_wserialization-%{dllgccver}-mt-%{dllboostver}.a
 %{mingw32_libdir}/libboost_wserialization-%{dllgccver}-mt-d-%{dllboostver}.a
 
+# Win64
+%files -n mingw64-boost
+%doc LICENSE_1_0.txt
+%{mingw64_includedir}/boost
+%{mingw64_bindir}/boost_chrono-%{dllgccver}-%{dllboostver}.dll
+%{mingw64_libdir}/libboost_chrono-%{dllgccver}-%{dllboostver}.dll.a
+%{mingw64_bindir}/boost_chrono-%{dllgccver}-d-%{dllboostver}.dll
+%{mingw64_libdir}/libboost_chrono-%{dllgccver}-d-%{dllboostver}.dll.a
+%{mingw64_bindir}/boost_chrono-%{dllgccver}-mt-%{dllboostver}.dll
+%{mingw64_libdir}/libboost_chrono-%{dllgccver}-mt-%{dllboostver}.dll.a
+%{mingw64_bindir}/boost_chrono-%{dllgccver}-mt-d-%{dllboostver}.dll
+%{mingw64_libdir}/libboost_chrono-%{dllgccver}-mt-d-%{dllboostver}.dll.a
+%{mingw64_bindir}/boost_date_time-%{dllgccver}-%{dllboostver}.dll
+%{mingw64_libdir}/libboost_date_time-%{dllgccver}-%{dllboostver}.dll.a
+%{mingw64_bindir}/boost_date_time-%{dllgccver}-d-%{dllboostver}.dll
+%{mingw64_libdir}/libboost_date_time-%{dllgccver}-d-%{dllboostver}.dll.a
+%{mingw64_bindir}/boost_date_time-%{dllgccver}-mt-%{dllboostver}.dll
+%{mingw64_libdir}/libboost_date_time-%{dllgccver}-mt-%{dllboostver}.dll.a
+%{mingw64_bindir}/boost_date_time-%{dllgccver}-mt-d-%{dllboostver}.dll
+%{mingw64_libdir}/libboost_date_time-%{dllgccver}-mt-d-%{dllboostver}.dll.a
+%{mingw64_bindir}/boost_filesystem-%{dllgccver}-%{dllboostver}.dll
+%{mingw64_libdir}/libboost_filesystem-%{dllgccver}-%{dllboostver}.dll.a
+%{mingw64_bindir}/boost_filesystem-%{dllgccver}-d-%{dllboostver}.dll
+%{mingw64_libdir}/libboost_filesystem-%{dllgccver}-d-%{dllboostver}.dll.a
+%{mingw64_bindir}/boost_filesystem-%{dllgccver}-mt-%{dllboostver}.dll
+%{mingw64_libdir}/libboost_filesystem-%{dllgccver}-mt-%{dllboostver}.dll.a
+%{mingw64_bindir}/boost_filesystem-%{dllgccver}-mt-d-%{dllboostver}.dll
+%{mingw64_libdir}/libboost_filesystem-%{dllgccver}-mt-d-%{dllboostver}.dll.a
+%{mingw64_bindir}/boost_graph-%{dllgccver}-%{dllboostver}.dll
+%{mingw64_libdir}/libboost_graph-%{dllgccver}-%{dllboostver}.dll.a
+%{mingw64_bindir}/boost_graph-%{dllgccver}-d-%{dllboostver}.dll
+%{mingw64_libdir}/libboost_graph-%{dllgccver}-d-%{dllboostver}.dll.a
+%{mingw64_bindir}/boost_graph-%{dllgccver}-mt-%{dllboostver}.dll
+%{mingw64_libdir}/libboost_graph-%{dllgccver}-mt-%{dllboostver}.dll.a
+%{mingw64_bindir}/boost_graph-%{dllgccver}-mt-d-%{dllboostver}.dll
+%{mingw64_libdir}/libboost_graph-%{dllgccver}-mt-d-%{dllboostver}.dll.a
+%{mingw64_bindir}/boost_iostreams-%{dllgccver}-%{dllboostver}.dll
+%{mingw64_libdir}/libboost_iostreams-%{dllgccver}-%{dllboostver}.dll.a
+%{mingw64_bindir}/boost_iostreams-%{dllgccver}-d-%{dllboostver}.dll
+%{mingw64_libdir}/libboost_iostreams-%{dllgccver}-d-%{dllboostver}.dll.a
+%{mingw64_bindir}/boost_iostreams-%{dllgccver}-mt-%{dllboostver}.dll
+%{mingw64_libdir}/libboost_iostreams-%{dllgccver}-mt-%{dllboostver}.dll.a
+%{mingw64_bindir}/boost_iostreams-%{dllgccver}-mt-d-%{dllboostver}.dll
+%{mingw64_libdir}/libboost_iostreams-%{dllgccver}-mt-d-%{dllboostver}.dll.a
+%{mingw64_bindir}/boost_locale-%{dllgccver}-%{dllboostver}.dll
+%{mingw64_libdir}/libboost_locale-%{dllgccver}-%{dllboostver}.dll.a
+%{mingw64_bindir}/boost_locale-%{dllgccver}-d-%{dllboostver}.dll
+%{mingw64_libdir}/libboost_locale-%{dllgccver}-d-%{dllboostver}.dll.a
+%{mingw64_bindir}/boost_locale-%{dllgccver}-mt-%{dllboostver}.dll
+%{mingw64_libdir}/libboost_locale-%{dllgccver}-mt-%{dllboostver}.dll.a
+%{mingw64_bindir}/boost_locale-%{dllgccver}-mt-d-%{dllboostver}.dll
+%{mingw64_libdir}/libboost_locale-%{dllgccver}-mt-d-%{dllboostver}.dll.a
+%{mingw64_bindir}/boost_math_c99-%{dllgccver}-%{dllboostver}.dll
+%{mingw64_libdir}/libboost_math_c99-%{dllgccver}-%{dllboostver}.dll.a
+%{mingw64_bindir}/boost_math_c99-%{dllgccver}-d-%{dllboostver}.dll
+%{mingw64_libdir}/libboost_math_c99-%{dllgccver}-d-%{dllboostver}.dll.a
+%{mingw64_bindir}/boost_math_c99-%{dllgccver}-mt-%{dllboostver}.dll
+%{mingw64_libdir}/libboost_math_c99-%{dllgccver}-mt-%{dllboostver}.dll.a
+%{mingw64_bindir}/boost_math_c99-%{dllgccver}-mt-d-%{dllboostver}.dll
+%{mingw64_libdir}/libboost_math_c99-%{dllgccver}-mt-d-%{dllboostver}.dll.a
+%{mingw64_bindir}/boost_math_c99f-%{dllgccver}-%{dllboostver}.dll
+%{mingw64_libdir}/libboost_math_c99f-%{dllgccver}-%{dllboostver}.dll.a
+%{mingw64_bindir}/boost_math_c99f-%{dllgccver}-d-%{dllboostver}.dll
+%{mingw64_libdir}/libboost_math_c99f-%{dllgccver}-d-%{dllboostver}.dll.a
+%{mingw64_bindir}/boost_math_c99f-%{dllgccver}-mt-%{dllboostver}.dll
+%{mingw64_libdir}/libboost_math_c99f-%{dllgccver}-mt-%{dllboostver}.dll.a
+%{mingw64_bindir}/boost_math_c99f-%{dllgccver}-mt-d-%{dllboostver}.dll
+%{mingw64_libdir}/libboost_math_c99f-%{dllgccver}-mt-d-%{dllboostver}.dll.a
+%{mingw64_bindir}/boost_math_c99l-%{dllgccver}-%{dllboostver}.dll
+%{mingw64_libdir}/libboost_math_c99l-%{dllgccver}-%{dllboostver}.dll.a
+%{mingw64_bindir}/boost_math_c99l-%{dllgccver}-d-%{dllboostver}.dll
+%{mingw64_libdir}/libboost_math_c99l-%{dllgccver}-d-%{dllboostver}.dll.a
+%{mingw64_bindir}/boost_math_c99l-%{dllgccver}-mt-%{dllboostver}.dll
+%{mingw64_libdir}/libboost_math_c99l-%{dllgccver}-mt-%{dllboostver}.dll.a
+%{mingw64_bindir}/boost_math_c99l-%{dllgccver}-mt-d-%{dllboostver}.dll
+%{mingw64_libdir}/libboost_math_c99l-%{dllgccver}-mt-d-%{dllboostver}.dll.a
+%{mingw64_bindir}/boost_math_tr1-%{dllgccver}-%{dllboostver}.dll
+%{mingw64_libdir}/libboost_math_tr1-%{dllgccver}-%{dllboostver}.dll.a
+%{mingw64_bindir}/boost_math_tr1-%{dllgccver}-d-%{dllboostver}.dll
+%{mingw64_libdir}/libboost_math_tr1-%{dllgccver}-d-%{dllboostver}.dll.a
+%{mingw64_bindir}/boost_math_tr1-%{dllgccver}-mt-%{dllboostver}.dll
+%{mingw64_libdir}/libboost_math_tr1-%{dllgccver}-mt-%{dllboostver}.dll.a
+%{mingw64_bindir}/boost_math_tr1-%{dllgccver}-mt-d-%{dllboostver}.dll
+%{mingw64_libdir}/libboost_math_tr1-%{dllgccver}-mt-d-%{dllboostver}.dll.a
+%{mingw64_bindir}/boost_math_tr1f-%{dllgccver}-%{dllboostver}.dll
+%{mingw64_libdir}/libboost_math_tr1f-%{dllgccver}-%{dllboostver}.dll.a
+%{mingw64_bindir}/boost_math_tr1f-%{dllgccver}-d-%{dllboostver}.dll
+%{mingw64_libdir}/libboost_math_tr1f-%{dllgccver}-d-%{dllboostver}.dll.a
+%{mingw64_bindir}/boost_math_tr1f-%{dllgccver}-mt-%{dllboostver}.dll
+%{mingw64_libdir}/libboost_math_tr1f-%{dllgccver}-mt-%{dllboostver}.dll.a
+%{mingw64_bindir}/boost_math_tr1f-%{dllgccver}-mt-d-%{dllboostver}.dll
+%{mingw64_libdir}/libboost_math_tr1f-%{dllgccver}-mt-d-%{dllboostver}.dll.a
+%{mingw64_bindir}/boost_math_tr1l-%{dllgccver}-%{dllboostver}.dll
+%{mingw64_libdir}/libboost_math_tr1l-%{dllgccver}-%{dllboostver}.dll.a
+%{mingw64_bindir}/boost_math_tr1l-%{dllgccver}-d-%{dllboostver}.dll
+%{mingw64_libdir}/libboost_math_tr1l-%{dllgccver}-d-%{dllboostver}.dll.a
+%{mingw64_bindir}/boost_math_tr1l-%{dllgccver}-mt-%{dllboostver}.dll
+%{mingw64_libdir}/libboost_math_tr1l-%{dllgccver}-mt-%{dllboostver}.dll.a
+%{mingw64_bindir}/boost_math_tr1l-%{dllgccver}-mt-d-%{dllboostver}.dll
+%{mingw64_libdir}/libboost_math_tr1l-%{dllgccver}-mt-d-%{dllboostver}.dll.a
+%{mingw64_bindir}/boost_prg_exec_monitor-%{dllgccver}-%{dllboostver}.dll
+%{mingw64_libdir}/libboost_prg_exec_monitor-%{dllgccver}-%{dllboostver}.dll.a
+%{mingw64_bindir}/boost_prg_exec_monitor-%{dllgccver}-d-%{dllboostver}.dll
+%{mingw64_libdir}/libboost_prg_exec_monitor-%{dllgccver}-d-%{dllboostver}.dll.a
+%{mingw64_bindir}/boost_prg_exec_monitor-%{dllgccver}-mt-%{dllboostver}.dll
+%{mingw64_libdir}/libboost_prg_exec_monitor-%{dllgccver}-mt-%{dllboostver}.dll.a
+%{mingw64_bindir}/boost_prg_exec_monitor-%{dllgccver}-mt-d-%{dllboostver}.dll
+%{mingw64_libdir}/libboost_prg_exec_monitor-%{dllgccver}-mt-d-%{dllboostver}.dll.a
+%{mingw64_bindir}/boost_program_options-%{dllgccver}-%{dllboostver}.dll
+%{mingw64_libdir}/libboost_program_options-%{dllgccver}-%{dllboostver}.dll.a
+%{mingw64_bindir}/boost_program_options-%{dllgccver}-d-%{dllboostver}.dll
+%{mingw64_libdir}/libboost_program_options-%{dllgccver}-d-%{dllboostver}.dll.a
+%{mingw64_bindir}/boost_program_options-%{dllgccver}-mt-%{dllboostver}.dll
+%{mingw64_libdir}/libboost_program_options-%{dllgccver}-mt-%{dllboostver}.dll.a
+%{mingw64_bindir}/boost_program_options-%{dllgccver}-mt-d-%{dllboostver}.dll
+%{mingw64_libdir}/libboost_program_options-%{dllgccver}-mt-d-%{dllboostver}.dll.a
+%{mingw64_bindir}/boost_random-%{dllgccver}-%{dllboostver}.dll
+%{mingw64_libdir}/libboost_random-%{dllgccver}-%{dllboostver}.dll.a
+%{mingw64_bindir}/boost_random-%{dllgccver}-d-%{dllboostver}.dll
+%{mingw64_libdir}/libboost_random-%{dllgccver}-d-%{dllboostver}.dll.a
+%{mingw64_bindir}/boost_random-%{dllgccver}-mt-%{dllboostver}.dll
+%{mingw64_libdir}/libboost_random-%{dllgccver}-mt-%{dllboostver}.dll.a
+%{mingw64_bindir}/boost_random-%{dllgccver}-mt-d-%{dllboostver}.dll
+%{mingw64_libdir}/libboost_random-%{dllgccver}-mt-d-%{dllboostver}.dll.a
+%{mingw64_bindir}/boost_regex-%{dllgccver}-%{dllboostver}.dll
+%{mingw64_libdir}/libboost_regex-%{dllgccver}-%{dllboostver}.dll.a
+%{mingw64_bindir}/boost_regex-%{dllgccver}-d-%{dllboostver}.dll
+%{mingw64_libdir}/libboost_regex-%{dllgccver}-d-%{dllboostver}.dll.a
+%{mingw64_bindir}/boost_regex-%{dllgccver}-mt-%{dllboostver}.dll
+%{mingw64_libdir}/libboost_regex-%{dllgccver}-mt-%{dllboostver}.dll.a
+%{mingw64_bindir}/boost_regex-%{dllgccver}-mt-d-%{dllboostver}.dll
+%{mingw64_libdir}/libboost_regex-%{dllgccver}-mt-d-%{dllboostver}.dll.a
+%{mingw64_bindir}/boost_serialization-%{dllgccver}-%{dllboostver}.dll
+%{mingw64_libdir}/libboost_serialization-%{dllgccver}-%{dllboostver}.dll.a
+%{mingw64_bindir}/boost_serialization-%{dllgccver}-d-%{dllboostver}.dll
+%{mingw64_libdir}/libboost_serialization-%{dllgccver}-d-%{dllboostver}.dll.a
+%{mingw64_bindir}/boost_serialization-%{dllgccver}-mt-%{dllboostver}.dll
+%{mingw64_libdir}/libboost_serialization-%{dllgccver}-mt-%{dllboostver}.dll.a
+%{mingw64_bindir}/boost_serialization-%{dllgccver}-mt-d-%{dllboostver}.dll
+%{mingw64_libdir}/libboost_serialization-%{dllgccver}-mt-d-%{dllboostver}.dll.a
+%{mingw64_bindir}/boost_signals-%{dllgccver}-%{dllboostver}.dll
+%{mingw64_libdir}/libboost_signals-%{dllgccver}-%{dllboostver}.dll.a
+%{mingw64_bindir}/boost_signals-%{dllgccver}-d-%{dllboostver}.dll
+%{mingw64_libdir}/libboost_signals-%{dllgccver}-d-%{dllboostver}.dll.a
+%{mingw64_bindir}/boost_signals-%{dllgccver}-mt-%{dllboostver}.dll
+%{mingw64_libdir}/libboost_signals-%{dllgccver}-mt-%{dllboostver}.dll.a
+%{mingw64_bindir}/boost_signals-%{dllgccver}-mt-d-%{dllboostver}.dll
+%{mingw64_libdir}/libboost_signals-%{dllgccver}-mt-d-%{dllboostver}.dll.a
+%{mingw64_bindir}/boost_system-%{dllgccver}-%{dllboostver}.dll
+%{mingw64_libdir}/libboost_system-%{dllgccver}-%{dllboostver}.dll.a
+%{mingw64_bindir}/boost_system-%{dllgccver}-d-%{dllboostver}.dll
+%{mingw64_libdir}/libboost_system-%{dllgccver}-d-%{dllboostver}.dll.a
+%{mingw64_bindir}/boost_system-%{dllgccver}-mt-%{dllboostver}.dll
+%{mingw64_libdir}/libboost_system-%{dllgccver}-mt-%{dllboostver}.dll.a
+%{mingw64_bindir}/boost_system-%{dllgccver}-mt-d-%{dllboostver}.dll
+%{mingw64_libdir}/libboost_system-%{dllgccver}-mt-d-%{dllboostver}.dll.a
+%{mingw64_bindir}/boost_thread-%{dllgccver}-mt-%{dllboostver}.dll
+%{mingw64_libdir}/libboost_thread-%{dllgccver}-mt-%{dllboostver}.dll.a
+%{mingw64_bindir}/boost_thread-%{dllgccver}-mt-d-%{dllboostver}.dll
+%{mingw64_libdir}/libboost_thread-%{dllgccver}-mt-d-%{dllboostver}.dll.a
+%{mingw64_bindir}/boost_timer-%{dllgccver}-%{dllboostver}.dll
+%{mingw64_libdir}/libboost_timer-%{dllgccver}-%{dllboostver}.dll.a
+%{mingw64_bindir}/boost_timer-%{dllgccver}-d-%{dllboostver}.dll
+%{mingw64_libdir}/libboost_timer-%{dllgccver}-d-%{dllboostver}.dll.a
+%{mingw64_bindir}/boost_timer-%{dllgccver}-mt-%{dllboostver}.dll
+%{mingw64_libdir}/libboost_timer-%{dllgccver}-mt-%{dllboostver}.dll.a
+%{mingw64_bindir}/boost_timer-%{dllgccver}-mt-d-%{dllboostver}.dll
+%{mingw64_libdir}/libboost_timer-%{dllgccver}-mt-d-%{dllboostver}.dll.a
+%{mingw64_bindir}/boost_unit_test_framework-%{dllgccver}-%{dllboostver}.dll
+%{mingw64_libdir}/libboost_unit_test_framework-%{dllgccver}-%{dllboostver}.dll.a
+%{mingw64_bindir}/boost_unit_test_framework-%{dllgccver}-d-%{dllboostver}.dll
+%{mingw64_libdir}/libboost_unit_test_framework-%{dllgccver}-d-%{dllboostver}.dll.a
+%{mingw64_bindir}/boost_unit_test_framework-%{dllgccver}-mt-%{dllboostver}.dll
+%{mingw64_libdir}/libboost_unit_test_framework-%{dllgccver}-mt-%{dllboostver}.dll.a
+%{mingw64_bindir}/boost_unit_test_framework-%{dllgccver}-mt-d-%{dllboostver}.dll
+%{mingw64_libdir}/libboost_unit_test_framework-%{dllgccver}-mt-d-%{dllboostver}.dll.a
+%{mingw64_bindir}/boost_wave-%{dllgccver}-mt-%{dllboostver}.dll
+%{mingw64_libdir}/libboost_wave-%{dllgccver}-mt-%{dllboostver}.dll.a
+%{mingw64_bindir}/boost_wave-%{dllgccver}-mt-d-%{dllboostver}.dll
+%{mingw64_libdir}/libboost_wave-%{dllgccver}-mt-d-%{dllboostver}.dll.a
+%{mingw64_bindir}/boost_wserialization-%{dllgccver}-%{dllboostver}.dll
+%{mingw64_libdir}/libboost_wserialization-%{dllgccver}-%{dllboostver}.dll.a
+%{mingw64_bindir}/boost_wserialization-%{dllgccver}-d-%{dllboostver}.dll
+%{mingw64_libdir}/libboost_wserialization-%{dllgccver}-d-%{dllboostver}.dll.a
+%{mingw64_bindir}/boost_wserialization-%{dllgccver}-mt-%{dllboostver}.dll
+%{mingw64_libdir}/libboost_wserialization-%{dllgccver}-mt-%{dllboostver}.dll.a
+%{mingw64_bindir}/boost_wserialization-%{dllgccver}-mt-d-%{dllboostver}.dll
+%{mingw64_libdir}/libboost_wserialization-%{dllgccver}-mt-d-%{dllboostver}.dll.a
+
+%files -n mingw64-boost-static
+%{mingw64_libdir}/libboost_chrono-%{dllgccver}-%{dllboostver}.a
+%{mingw64_libdir}/libboost_chrono-%{dllgccver}-d-%{dllboostver}.a
+%{mingw64_libdir}/libboost_chrono-%{dllgccver}-mt-%{dllboostver}.a
+%{mingw64_libdir}/libboost_chrono-%{dllgccver}-mt-d-%{dllboostver}.a
+%{mingw64_libdir}/libboost_date_time-%{dllgccver}-%{dllboostver}.a
+%{mingw64_libdir}/libboost_date_time-%{dllgccver}-d-%{dllboostver}.a
+%{mingw64_libdir}/libboost_date_time-%{dllgccver}-mt-%{dllboostver}.a
+%{mingw64_libdir}/libboost_date_time-%{dllgccver}-mt-d-%{dllboostver}.a
+%{mingw64_libdir}/libboost_filesystem-%{dllgccver}-%{dllboostver}.a
+%{mingw64_libdir}/libboost_filesystem-%{dllgccver}-d-%{dllboostver}.a
+%{mingw64_libdir}/libboost_filesystem-%{dllgccver}-mt-%{dllboostver}.a
+%{mingw64_libdir}/libboost_filesystem-%{dllgccver}-mt-d-%{dllboostver}.a
+%{mingw64_libdir}/libboost_iostreams-%{dllgccver}-%{dllboostver}.a
+%{mingw64_libdir}/libboost_iostreams-%{dllgccver}-d-%{dllboostver}.a
+%{mingw64_libdir}/libboost_iostreams-%{dllgccver}-mt-%{dllboostver}.a
+%{mingw64_libdir}/libboost_iostreams-%{dllgccver}-mt-d-%{dllboostver}.a
+%{mingw64_libdir}/libboost_locale-%{dllgccver}-%{dllboostver}.a
+%{mingw64_libdir}/libboost_locale-%{dllgccver}-d-%{dllboostver}.a
+%{mingw64_libdir}/libboost_locale-%{dllgccver}-mt-%{dllboostver}.a
+%{mingw64_libdir}/libboost_locale-%{dllgccver}-mt-d-%{dllboostver}.a
+%{mingw64_libdir}/libboost_math_c99-%{dllgccver}-%{dllboostver}.a
+%{mingw64_libdir}/libboost_math_c99-%{dllgccver}-d-%{dllboostver}.a
+%{mingw64_libdir}/libboost_math_c99-%{dllgccver}-mt-%{dllboostver}.a
+%{mingw64_libdir}/libboost_math_c99-%{dllgccver}-mt-d-%{dllboostver}.a
+%{mingw64_libdir}/libboost_math_c99f-%{dllgccver}-%{dllboostver}.a
+%{mingw64_libdir}/libboost_math_c99f-%{dllgccver}-d-%{dllboostver}.a
+%{mingw64_libdir}/libboost_math_c99f-%{dllgccver}-mt-%{dllboostver}.a
+%{mingw64_libdir}/libboost_math_c99f-%{dllgccver}-mt-d-%{dllboostver}.a
+%{mingw64_libdir}/libboost_math_c99l-%{dllgccver}-%{dllboostver}.a
+%{mingw64_libdir}/libboost_math_c99l-%{dllgccver}-d-%{dllboostver}.a
+%{mingw64_libdir}/libboost_math_c99l-%{dllgccver}-mt-%{dllboostver}.a
+%{mingw64_libdir}/libboost_math_c99l-%{dllgccver}-mt-d-%{dllboostver}.a
+%{mingw64_libdir}/libboost_math_tr1-%{dllgccver}-%{dllboostver}.a
+%{mingw64_libdir}/libboost_math_tr1-%{dllgccver}-d-%{dllboostver}.a
+%{mingw64_libdir}/libboost_math_tr1-%{dllgccver}-mt-%{dllboostver}.a
+%{mingw64_libdir}/libboost_math_tr1-%{dllgccver}-mt-d-%{dllboostver}.a
+%{mingw64_libdir}/libboost_math_tr1f-%{dllgccver}-%{dllboostver}.a
+%{mingw64_libdir}/libboost_math_tr1f-%{dllgccver}-d-%{dllboostver}.a
+%{mingw64_libdir}/libboost_math_tr1f-%{dllgccver}-mt-%{dllboostver}.a
+%{mingw64_libdir}/libboost_math_tr1f-%{dllgccver}-mt-d-%{dllboostver}.a
+%{mingw64_libdir}/libboost_math_tr1l-%{dllgccver}-%{dllboostver}.a
+%{mingw64_libdir}/libboost_math_tr1l-%{dllgccver}-d-%{dllboostver}.a
+%{mingw64_libdir}/libboost_math_tr1l-%{dllgccver}-mt-%{dllboostver}.a
+%{mingw64_libdir}/libboost_math_tr1l-%{dllgccver}-mt-d-%{dllboostver}.a
+%{mingw64_libdir}/libboost_prg_exec_monitor-%{dllgccver}-%{dllboostver}.a
+%{mingw64_libdir}/libboost_prg_exec_monitor-%{dllgccver}-d-%{dllboostver}.a
+%{mingw64_libdir}/libboost_prg_exec_monitor-%{dllgccver}-mt-%{dllboostver}.a
+%{mingw64_libdir}/libboost_prg_exec_monitor-%{dllgccver}-mt-d-%{dllboostver}.a
+%{mingw64_libdir}/libboost_program_options-%{dllgccver}-%{dllboostver}.a
+%{mingw64_libdir}/libboost_program_options-%{dllgccver}-d-%{dllboostver}.a
+%{mingw64_libdir}/libboost_program_options-%{dllgccver}-mt-%{dllboostver}.a
+%{mingw64_libdir}/libboost_program_options-%{dllgccver}-mt-d-%{dllboostver}.a
+%{mingw64_libdir}/libboost_random-%{dllgccver}-%{dllboostver}.a
+%{mingw64_libdir}/libboost_random-%{dllgccver}-d-%{dllboostver}.a
+%{mingw64_libdir}/libboost_random-%{dllgccver}-mt-%{dllboostver}.a
+%{mingw64_libdir}/libboost_random-%{dllgccver}-mt-d-%{dllboostver}.a
+%{mingw64_libdir}/libboost_regex-%{dllgccver}-%{dllboostver}.a
+%{mingw64_libdir}/libboost_regex-%{dllgccver}-d-%{dllboostver}.a
+%{mingw64_libdir}/libboost_regex-%{dllgccver}-mt-%{dllboostver}.a
+%{mingw64_libdir}/libboost_regex-%{dllgccver}-mt-d-%{dllboostver}.a
+%{mingw64_libdir}/libboost_serialization-%{dllgccver}-%{dllboostver}.a
+%{mingw64_libdir}/libboost_serialization-%{dllgccver}-d-%{dllboostver}.a
+%{mingw64_libdir}/libboost_serialization-%{dllgccver}-mt-%{dllboostver}.a
+%{mingw64_libdir}/libboost_serialization-%{dllgccver}-mt-d-%{dllboostver}.a
+%{mingw64_libdir}/libboost_signals-%{dllgccver}-%{dllboostver}.a
+%{mingw64_libdir}/libboost_signals-%{dllgccver}-d-%{dllboostver}.a
+%{mingw64_libdir}/libboost_signals-%{dllgccver}-mt-%{dllboostver}.a
+%{mingw64_libdir}/libboost_signals-%{dllgccver}-mt-d-%{dllboostver}.a
+%{mingw64_libdir}/libboost_system-%{dllgccver}-%{dllboostver}.a
+%{mingw64_libdir}/libboost_system-%{dllgccver}-d-%{dllboostver}.a
+%{mingw64_libdir}/libboost_system-%{dllgccver}-mt-%{dllboostver}.a
+%{mingw64_libdir}/libboost_system-%{dllgccver}-mt-d-%{dllboostver}.a
+%{mingw64_libdir}/libboost_test_exec_monitor-%{dllgccver}-%{dllboostver}.a
+%{mingw64_libdir}/libboost_test_exec_monitor-%{dllgccver}-d-%{dllboostver}.a
+%{mingw64_libdir}/libboost_test_exec_monitor-%{dllgccver}-mt-%{dllboostver}.a
+%{mingw64_libdir}/libboost_test_exec_monitor-%{dllgccver}-mt-d-%{dllboostver}.a
+%{mingw64_libdir}/libboost_thread-%{dllgccver}-mt-%{dllboostver}.a
+%{mingw64_libdir}/libboost_thread-%{dllgccver}-mt-d-%{dllboostver}.a
+%{mingw64_libdir}/libboost_timer-%{dllgccver}-%{dllboostver}.a
+%{mingw64_libdir}/libboost_timer-%{dllgccver}-d-%{dllboostver}.a
+%{mingw64_libdir}/libboost_timer-%{dllgccver}-mt-%{dllboostver}.a
+%{mingw64_libdir}/libboost_timer-%{dllgccver}-mt-d-%{dllboostver}.a
+%{mingw64_libdir}/libboost_unit_test_framework-%{dllgccver}-%{dllboostver}.a
+%{mingw64_libdir}/libboost_unit_test_framework-%{dllgccver}-d-%{dllboostver}.a
+%{mingw64_libdir}/libboost_unit_test_framework-%{dllgccver}-mt-%{dllboostver}.a
+%{mingw64_libdir}/libboost_unit_test_framework-%{dllgccver}-mt-d-%{dllboostver}.a
+%{mingw64_libdir}/libboost_wave-%{dllgccver}-mt-%{dllboostver}.a
+%{mingw64_libdir}/libboost_wave-%{dllgccver}-mt-d-%{dllboostver}.a
+%{mingw64_libdir}/libboost_wserialization-%{dllgccver}-%{dllboostver}.a
+%{mingw64_libdir}/libboost_wserialization-%{dllgccver}-d-%{dllboostver}.a
+%{mingw64_libdir}/libboost_wserialization-%{dllgccver}-mt-%{dllboostver}.a
+%{mingw64_libdir}/libboost_wserialization-%{dllgccver}-mt-d-%{dllboostver}.a
+
 
 %changelog
+* Fri Mar 16 2012 Erik van Pienbroek <epienbro@fedoraproject.org> - 1.48.0-7
+- Added win64 support (contributed by Jay Higley)
+
 * Wed Mar 07 2012 Erik van Pienbroek <epienbro@fedoraproject.org> - 1.48.0-6
 - Renamed the source package to mingw-boost (RHBZ #800845)
 - Fixed source URL

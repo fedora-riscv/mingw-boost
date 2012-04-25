@@ -1,14 +1,11 @@
 %?mingw_package_header
 
-%global mingw_build_win32 1
-%global mingw_build_win64 1
-
 Name:           mingw-boost
 Version:        1.48.0
 %global version_enc 1_48_0
 %global dllboostver 1_48
 %global dllgccver gcc47
-Release:        7%{?dist}
+Release:        8%{?dist}
 Summary:        MinGW Windows port of Boost C++ Libraries
 
 License:        Boost
@@ -781,6 +778,9 @@ find $RPM_BUILD_ROOT%{mingw64_includedir}/ \( -name '*.pl' -o -name '*.sh' \) -e
 
 
 %changelog
+* Wed Apr 25 2012 Erik van Pienbroek <epienbro@fedoraproject.org> - 1.48.0-8
+- Rebuild against mingw-bzip2
+
 * Fri Mar 16 2012 Erik van Pienbroek <epienbro@fedoraproject.org> - 1.48.0-7
 - Added win64 support (contributed by Jay Higley)
 

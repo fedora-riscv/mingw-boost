@@ -5,7 +5,7 @@ Version:        1.48.0
 %global version_enc 1_48_0
 %global dllboostver 1_48
 %global dllgccver gcc47
-Release:        8%{?dist}
+Release:        9%{?dist}
 Summary:        MinGW Windows port of Boost C++ Libraries
 
 License:        Boost
@@ -115,7 +115,7 @@ Standards Committee's upcoming C++ Standard Library Technical Report.)
 
 # Win32
 %package -n mingw32-boost
-Summary:         MinGW Windows zlib compression library for the win32 target
+Summary:         MinGW Windows Boost C++ library for the win32 target
 
 %description -n mingw32-boost
 Boost provides free peer-reviewed portable C++ source libraries.  The
@@ -135,7 +135,7 @@ Static version of the MinGW Windows Boost C++ library.
 
 # Win64
 %package -n mingw64-boost
-Summary:         MinGW Windows zlib compression library for the win32 target
+Summary:         MinGW Windows Boost C++ library for the win64 target
 
 %description -n mingw64-boost
 Boost provides free peer-reviewed portable C++ source libraries.  The
@@ -778,6 +778,9 @@ find $RPM_BUILD_ROOT%{mingw64_includedir}/ \( -name '*.pl' -o -name '*.sh' \) -e
 
 
 %changelog
+* Fri Jun 15 2012 Erik van Pienbroek <epienbro@fedoraproject.org> - 1.48.0-9
+- Improved summary (RHBZ #831849)
+
 * Wed Apr 25 2012 Erik van Pienbroek <epienbro@fedoraproject.org> - 1.48.0-8
 - Rebuild against mingw-bzip2
 

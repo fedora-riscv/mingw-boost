@@ -5,7 +5,7 @@ Version:        1.48.0
 %global version_enc 1_48_0
 %global dllboostver 1_48
 %global dllgccver gcc47
-Release:        9%{?dist}
+Release:        10%{?dist}
 Summary:        MinGW Windows port of Boost C++ Libraries
 
 License:        Boost
@@ -778,6 +778,9 @@ find $RPM_BUILD_ROOT%{mingw64_includedir}/ \( -name '*.pl' -o -name '*.sh' \) -e
 
 
 %changelog
+* Fri Jul 20 2012 Fedora Release Engineering <rel-eng@lists.fedoraproject.org> - 1.48.0-10
+- Rebuilt for https://fedoraproject.org/wiki/Fedora_18_Mass_Rebuild
+
 * Fri Jun 15 2012 Erik van Pienbroek <epienbro@fedoraproject.org> - 1.48.0-9
 - Improved summary (RHBZ #831849)
 

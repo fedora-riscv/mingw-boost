@@ -359,6 +359,11 @@ mv $RPM_BUILD_ROOT%{mingw64_libdir}/*.dll $RPM_BUILD_ROOT%{mingw64_bindir}
 %{mingw32_libdir}/libboost_wave-mt.a
 %{mingw32_libdir}/libboost_wserialization.a
 %{mingw32_libdir}/libboost_wserialization-mt.a
+# static only libraries
+%{mingw32_libdir}/libboost_exception-mt.a
+%{mingw32_libdir}/libboost_exception.a
+%{mingw32_libdir}/libboost_test_exec_monitor-mt.a
+%{mingw32_libdir}/libboost_test_exec_monitor.a
 
 # Win64
 %files -n mingw64-boost
@@ -504,6 +509,11 @@ mv $RPM_BUILD_ROOT%{mingw64_libdir}/*.dll $RPM_BUILD_ROOT%{mingw64_bindir}
 %{mingw64_libdir}/libboost_wave-mt.a
 %{mingw64_libdir}/libboost_wserialization.a
 %{mingw64_libdir}/libboost_wserialization-mt.a
+# static only libraries
+%{mingw64_libdir}/libboost_exception-mt.a
+%{mingw64_libdir}/libboost_exception.a
+%{mingw64_libdir}/libboost_test_exec_monitor-mt.a
+%{mingw64_libdir}/libboost_test_exec_monitor.a
 
 %changelog
 * Tue Dec  4 2012 Thomas Sailer <t.sailer@alumni.ethz.ch> - 1.50.0-1

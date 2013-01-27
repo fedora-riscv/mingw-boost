@@ -6,7 +6,7 @@ Version:        1.50.0
 %global version_enc 1_50_0
 %global dllboostver 1_50
 %global dllgccver gcc47
-Release:        1%{?dist}
+Release:        2%{?dist}
 Summary:        MinGW Windows port of Boost C++ Libraries
 
 %global toplev_dirname %{name1}_%{version_enc}
@@ -516,6 +516,9 @@ mv $RPM_BUILD_ROOT%{mingw64_libdir}/*.dll $RPM_BUILD_ROOT%{mingw64_bindir}
 %{mingw64_libdir}/libboost_test_exec_monitor.a
 
 %changelog
+* Sun Jan 27 2013 Erik van Pienbroek <epienbro@fedoraproject.org> - 1.50.0-2
+- Rebuild against mingw-gcc 4.8 (win64 uses SEH exceptions now)
+
 * Tue Dec  4 2012 Thomas Sailer <t.sailer@alumni.ethz.ch> - 1.50.0-1
 - update to 1.50.0
 - revert to bjam build

@@ -634,5 +634,5 @@ mv $RPM_BUILD_ROOT%{mingw64_libdir}/*.dll $RPM_BUILD_ROOT%{mingw64_bindir}
 * Fri Jan 23 2009 Richard W.M. Jones <rjones@redhat.com> - 1.34.1-3
 - Use _smp_mflags.
 
-* Sat Oct 24 2008 Richard W.M. Jones <rjones@redhat.com> - 1.34.1-2
+* Fri Oct 24 2008 Richard W.M. Jones <rjones@redhat.com> - 1.34.1-2
 - Initial RPM release.

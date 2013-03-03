@@ -2,11 +2,9 @@
 
 %global name1 boost
 Name:           mingw-%{name1}
-Version:        1.50.0
-%global version_enc 1_50_0
-%global dllboostver 1_50
-%global dllgccver gcc47
-Release:        2%{?dist}
+Version:        1.53.0
+%global version_enc 1_53_0
+Release:        1%{?dist}
 Summary:        MinGW Windows port of Boost C++ Libraries
 
 %global toplev_dirname %{name1}_%{version_enc}
@@ -15,10 +13,6 @@ License:        Boost
 Group:          Development/Libraries
 URL:            http://www.boost.org
 Source0:        http://downloads.sourceforge.net/%{name1}/%{toplev_dirname}.tar.bz2
-
-# The patch may break c++03, and there is therefore no plan yet to include
-# it upstream: https://svn.boost.org/trac/boost/ticket/4999
-Patch2:         boost-1.50.0-signals-erase.patch
 
 # https://svn.boost.org/trac/boost/ticket/6150
 Patch4:         boost-1.50.0-fix-non-utf8-files.patch
@@ -34,23 +28,21 @@ Patch7:         boost-1.50.0-foreach.patch
 
 # https://bugzilla.redhat.com/show_bug.cgi?id=781859
 # The following tickets have still to be fixed by upstream.
-# https://svn.boost.org/trac/boost/ticket/6406 fixed, but only in Boost-1.51.0
 # https://svn.boost.org/trac/boost/ticket/6408
 # https://svn.boost.org/trac/boost/ticket/6410
 # https://svn.boost.org/trac/boost/ticket/6413
-# https://svn.boost.org/trac/boost/ticket/6415
-Patch9:         boost-1.50.0-attribute.patch
+Patch9: boost-1.53.0-attribute.patch
 
 # https://bugzilla.redhat.com/show_bug.cgi?id=783660
 # https://svn.boost.org/trac/boost/ticket/6459 fixed
 Patch10:        boost-1.50.0-long-double-1.patch
 
-# https://bugzilla.redhat.com/show_bug.cgi?id=784654
-Patch12:        boost-1.50.0-polygon.patch
-
 # https://bugzilla.redhat.com/show_bug.cgi?id=828856
 # https://bugzilla.redhat.com/show_bug.cgi?id=828857
 Patch15:        boost-1.50.0-pool.patch
+
+# https://bugzilla.redhat.com/show_bug.cgi?id=909888
+Patch16: boost-1.53.0-context.patch
 
 Patch1000:      boost-mingw.patch
 
@@ -142,14 +134,13 @@ mv %{toplev_dirname} win32
 
 pushd win32
 # Fixes
-%patch2 -p1
 %patch4 -p1
 %patch5 -p1
 %patch7 -p2
 %patch9 -p1
 %patch10 -p1
-%patch12 -p3
 %patch15 -p0
+%patch16 -p1
 %patch1000 -p0 -b .mingw
 popd
 
@@ -516,6 +507,9 @@ mv $RPM_BUILD_ROOT%{mingw64_libdir}/*.dll $RPM_BUILD_ROOT%{mingw64_bindir}
 %{mingw64_libdir}/libboost_test_exec_monitor.a
 
 %changelog
+* Sun Mar  3 2013 Thomas Sailer <t.sailer@alumni.ethz.ch> - 1.53.0-1
+- update to 1.53.0
+
 * Sun Jan 27 2013 Erik van Pienbroek <epienbro@fedoraproject.org> - 1.50.0-2
 - Rebuild against mingw-gcc 4.8 (win64 uses SEH exceptions now)
 

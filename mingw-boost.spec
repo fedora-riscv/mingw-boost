@@ -210,8 +210,11 @@ mv $RPM_BUILD_ROOT%{mingw64_libdir}/*.dll $RPM_BUILD_ROOT%{mingw64_bindir}
 %files -n mingw32-boost
 %doc win32/LICENSE_1_0.txt
 %{mingw32_includedir}/boost
+%{mingw32_bindir}/libboost_atomic-mt.dll
 %{mingw32_bindir}/libboost_chrono.dll
 %{mingw32_bindir}/libboost_chrono-mt.dll
+%{mingw32_bindir}/libboost_context.dll
+%{mingw32_bindir}/libboost_context-mt.dll
 %{mingw32_bindir}/libboost_date_time.dll
 %{mingw32_bindir}/libboost_date_time-mt.dll
 %{mingw32_bindir}/libboost_filesystem.dll
@@ -256,8 +259,11 @@ mv $RPM_BUILD_ROOT%{mingw64_libdir}/*.dll $RPM_BUILD_ROOT%{mingw64_bindir}
 %{mingw32_bindir}/libboost_wave-mt.dll
 %{mingw32_bindir}/libboost_wserialization.dll
 %{mingw32_bindir}/libboost_wserialization-mt.dll
+%{mingw32_libdir}/libboost_atomic-mt.dll.a
 %{mingw32_libdir}/libboost_chrono.dll.a
 %{mingw32_libdir}/libboost_chrono-mt.dll.a
+%{mingw32_libdir}/libboost_context.dll.a
+%{mingw32_libdir}/libboost_context-mt.dll.a
 %{mingw32_libdir}/libboost_date_time.dll.a
 %{mingw32_libdir}/libboost_date_time-mt.dll.a
 %{mingw32_libdir}/libboost_filesystem.dll.a
@@ -304,6 +310,9 @@ mv $RPM_BUILD_ROOT%{mingw64_libdir}/*.dll $RPM_BUILD_ROOT%{mingw64_bindir}
 %{mingw32_libdir}/libboost_wserialization-mt.dll.a
 
 %files -n mingw32-boost-static
+%{mingw32_libdir}/libboost_atomic-mt.a
+%{mingw32_libdir}/libboost_context.a
+%{mingw32_libdir}/libboost_context-mt.a
 %{mingw32_libdir}/libboost_chrono.a
 %{mingw32_libdir}/libboost_chrono-mt.a
 %{mingw32_libdir}/libboost_date_time.a
@@ -360,8 +369,11 @@ mv $RPM_BUILD_ROOT%{mingw64_libdir}/*.dll $RPM_BUILD_ROOT%{mingw64_bindir}
 %files -n mingw64-boost
 %doc win64/LICENSE_1_0.txt
 %{mingw64_includedir}/boost
+%{mingw64_bindir}/libboost_atomic-mt.dll
 %{mingw64_bindir}/libboost_chrono.dll
 %{mingw64_bindir}/libboost_chrono-mt.dll
+%{mingw64_bindir}/libboost_context.dll
+%{mingw64_bindir}/libboost_context-mt.dll
 %{mingw64_bindir}/libboost_date_time.dll
 %{mingw64_bindir}/libboost_date_time-mt.dll
 %{mingw64_bindir}/libboost_filesystem.dll
@@ -406,8 +418,11 @@ mv $RPM_BUILD_ROOT%{mingw64_libdir}/*.dll $RPM_BUILD_ROOT%{mingw64_bindir}
 %{mingw64_bindir}/libboost_wave-mt.dll
 %{mingw64_bindir}/libboost_wserialization.dll
 %{mingw64_bindir}/libboost_wserialization-mt.dll
+%{mingw64_libdir}/libboost_atomic-mt.dll.a
 %{mingw64_libdir}/libboost_chrono.dll.a
 %{mingw64_libdir}/libboost_chrono-mt.dll.a
+%{mingw64_libdir}/libboost_context.dll.a
+%{mingw64_libdir}/libboost_context-mt.dll.a
 %{mingw64_libdir}/libboost_date_time.dll.a
 %{mingw64_libdir}/libboost_date_time-mt.dll.a
 %{mingw64_libdir}/libboost_filesystem.dll.a
@@ -454,8 +469,11 @@ mv $RPM_BUILD_ROOT%{mingw64_libdir}/*.dll $RPM_BUILD_ROOT%{mingw64_bindir}
 %{mingw64_libdir}/libboost_wserialization-mt.dll.a
 
 %files -n mingw64-boost-static
+%{mingw64_libdir}/libboost_atomic-mt.a
 %{mingw64_libdir}/libboost_chrono.a
 %{mingw64_libdir}/libboost_chrono-mt.a
+%{mingw64_libdir}/libboost_context.a
+%{mingw64_libdir}/libboost_context-mt.a
 %{mingw64_libdir}/libboost_date_time.a
 %{mingw64_libdir}/libboost_date_time-mt.a
 %{mingw64_libdir}/libboost_filesystem.a

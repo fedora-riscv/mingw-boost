@@ -44,6 +44,7 @@ Patch15:        boost-1.50.0-pool.patch
 # https://bugzilla.redhat.com/show_bug.cgi?id=909888
 Patch16: boost-1.53.0-context.patch
 
+# https://svn.boost.org/trac/boost/ticket/7262
 Patch1000:      boost-mingw.patch
 
 BuildArch:      noarch

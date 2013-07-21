@@ -47,6 +47,10 @@ Patch16: boost-1.53.0-context.patch
 # https://svn.boost.org/trac/boost/ticket/7262
 Patch1000:      boost-mingw.patch
 
+# Fix FTBFS on recent mingw-w64 and also use intrinsics based
+# versions of the Interlocked symbols which are better optimized
+Patch1001:      boost-include-intrin-h-on-mingw-w64.patch
+
 BuildArch:      noarch
 
 BuildRequires:  file
@@ -143,6 +147,7 @@ pushd win32
 %patch15 -p0
 %patch16 -p1
 %patch1000 -p0 -b .mingw
+%patch1001 -p0 -b .interlocked
 popd
 
 cp -r win32 win64
@@ -528,6 +533,8 @@ mv $RPM_BUILD_ROOT%{mingw64_libdir}/*.dll $RPM_BUILD_ROOT%{mingw64_bindir}
 %changelog
 * Sat Jul 20 2013 Erik van Pienbroek <epienbro@fedoraproject.org> - 1.53.0-2
 - Fix the build when the native libicu-devel is installed
+- Fix FTBFS on recent mingw-w64 and also use intrinsics based
+  versions of the Interlocked symbols which are better optimized
 
 * Sun Mar  3 2013 Thomas Sailer <t.sailer@alumni.ethz.ch> - 1.53.0-1
 - update to 1.53.0

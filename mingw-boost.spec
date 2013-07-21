@@ -4,7 +4,7 @@
 Name:           mingw-%{name1}
 Version:        1.53.0
 %global version_enc 1_53_0
-Release:        1%{?dist}
+Release:        2%{?dist}
 Summary:        MinGW Windows port of Boost C++ Libraries
 
 %global toplev_dirname %{name1}_%{version_enc}
@@ -154,7 +154,7 @@ cat >> ./tools/build/v2/user-config.jam << EOF
 using gcc : : i686-w64-mingw32-g++ ;
 EOF
 
-./bootstrap.sh --with-toolset=gcc --with-icu
+./bootstrap.sh --with-toolset=gcc --with-icu=%{mingw32_prefix}
 
 echo ============================= build serial ==================
 ./b2 -d+2 -q %{?_smp_mflags} --layout=tagged \
@@ -169,7 +169,7 @@ cat >> ./tools/build/v2/user-config.jam << EOF
 using gcc : : x86_64-w64-mingw32-g++ ;
 EOF
 
-./bootstrap.sh --with-toolset=gcc --with-icu
+./bootstrap.sh --with-toolset=gcc --with-icu=%{mingw64_prefix}
 
 echo ============================= build serial ==================
 ./b2 -d+2 -q %{?_smp_mflags} --layout=tagged \
@@ -526,6 +526,9 @@ mv $RPM_BUILD_ROOT%{mingw64_libdir}/*.dll $RPM_BUILD_ROOT%{mingw64_bindir}
 %{mingw64_libdir}/libboost_test_exec_monitor.a
 
 %changelog
+* Sat Jul 20 2013 Erik van Pienbroek <epienbro@fedoraproject.org> - 1.53.0-2
+- Fix the build when the native libicu-devel is installed
+
 * Sun Mar  3 2013 Thomas Sailer <t.sailer@alumni.ethz.ch> - 1.53.0-1
 - update to 1.53.0
 

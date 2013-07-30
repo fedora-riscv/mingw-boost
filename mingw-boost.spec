@@ -2,9 +2,9 @@
 
 %global name1 boost
 Name:           mingw-%{name1}
-Version:        1.53.0
-%global version_enc 1_53_0
-Release:        2%{?dist}
+Version:        1.54.0
+%global version_enc 1_54_0
+Release:        1%{?dist}
 Summary:        MinGW Windows port of Boost C++ Libraries
 
 %global toplev_dirname %{name1}_%{version_enc}
@@ -22,10 +22,6 @@ Patch4:         boost-1.50.0-fix-non-utf8-files.patch
 # http://www.boost.org/boost-build2/doc/html/bbv2/overview.html
 Patch5:         boost-1.48.0-add-bjam-man-page.patch
 
-# https://bugzilla.redhat.com/show_bug.cgi?id=756005
-# https://svn.boost.org/trac/boost/ticket/6131
-Patch7:         boost-1.50.0-foreach.patch
-
 # https://bugzilla.redhat.com/show_bug.cgi?id=781859
 # The following tickets have still to be fixed by upstream.
 # https://svn.boost.org/trac/boost/ticket/6408
@@ -41,8 +37,78 @@ Patch10:        boost-1.50.0-long-double-1.patch
 # https://bugzilla.redhat.com/show_bug.cgi?id=828857
 Patch15:        boost-1.50.0-pool.patch
 
-# https://bugzilla.redhat.com/show_bug.cgi?id=909888
-Patch16: boost-1.53.0-context.patch
+# https://bugzilla.redhat.com/show_bug.cgi?id=977098
+# https://svn.boost.org/trac/boost/ticket/8731
+Patch18: boost-1.54.0-__GLIBC_HAVE_LONG_LONG.patch
+
+# Upstream patches posted as release notes:
+# http://www.boost.org/users/history/version_1_54_0.html
+Patch19: 001-coroutine.patch
+Patch20: 002-date-time.patch
+Patch21: 003-log.patch
+
+# https://svn.boost.org/trac/boost/ticket/8826
+Patch22: boost-1.54.0-context-execstack.patch
+
+# https://svn.boost.org/trac/boost/ticket/8844
+Patch23: boost-1.54.0-bind-static_assert.patch
+
+# https://svn.boost.org/trac/boost/ticket/8847
+Patch24: boost-1.54.0-concept-unused_typedef.patch
+
+# https://svn.boost.org/trac/boost/ticket/5637
+Patch25: boost-1.54.0-mpl-print.patch
+
+# https://svn.boost.org/trac/boost/ticket/8859
+Patch26: boost-1.54.0-static_warning-unused_typedef.patch
+
+# https://svn.boost.org/trac/boost/ticket/8855
+Patch27: boost-1.54.0-math-unused_typedef.patch
+Patch28: boost-1.54.0-math-unused_typedef-2.patch
+
+# https://svn.boost.org/trac/boost/ticket/8853
+Patch31: boost-1.54.0-tuple-unused_typedef.patch
+
+# https://svn.boost.org/trac/boost/ticket/8854
+Patch32: boost-1.54.0-random-unused_typedef.patch
+
+# https://svn.boost.org/trac/boost/ticket/8856
+Patch33: boost-1.54.0-date_time-unused_typedef.patch
+Patch34: boost-1.54.0-date_time-unused_typedef-2.patch
+
+# https://svn.boost.org/trac/boost/ticket/8870
+Patch35: boost-1.54.0-spirit-unused_typedef.patch
+Patch36: boost-1.54.0-spirit-unused_typedef-2.patch
+
+# https://svn.boost.org/trac/boost/ticket/8871
+Patch37: boost-1.54.0-numeric-unused_typedef.patch
+
+# https://svn.boost.org/trac/boost/ticket/8872
+Patch38: boost-1.54.0-multiprecision-unused_typedef.patch
+
+# https://svn.boost.org/trac/boost/ticket/8874
+Patch42: boost-1.54.0-unordered-unused_typedef.patch
+
+# https://svn.boost.org/trac/boost/ticket/8876
+Patch43: boost-1.54.0-algorithm-unused_typedef.patch
+
+# https://svn.boost.org/trac/boost/ticket/8877
+Patch44: boost-1.54.0-graph-unused_typedef.patch
+
+# https://svn.boost.org/trac/boost/ticket/8878
+Patch45: boost-1.54.0-locale-unused_typedef.patch
+
+# https://svn.boost.org/trac/boost/ticket/8879
+Patch46: boost-1.54.0-property_tree-unused_typedef.patch
+
+# https://svn.boost.org/trac/boost/ticket/8880
+Patch47: boost-1.54.0-xpressive-unused_typedef.patch
+
+# https://svn.boost.org/trac/boost/ticket/8881
+Patch48: boost-1.54.0-mpi-unused_typedef.patch
+
+# https://svn.boost.org/trac/boost/ticket/8888
+Patch49: boost-1.54.0-python-unused_typedef.patch
 
 # https://svn.boost.org/trac/boost/ticket/7262
 Patch1000:      boost-mingw.patch
@@ -141,11 +207,35 @@ pushd win32
 # Fixes
 %patch4 -p1
 %patch5 -p1
-%patch7 -p2
 %patch9 -p1
-%patch10 -p1
 %patch15 -p0
-%patch16 -p1
+%patch18 -p1
+%patch19 -p1
+%patch20 -p1
+%patch21 -p1
+%patch22 -p1
+%patch23 -p1
+%patch24 -p1
+%patch25 -p0
+%patch26 -p1
+%patch27 -p1
+%patch28 -p0
+%patch31 -p0
+%patch32 -p0
+%patch33 -p0
+%patch34 -p1
+%patch35 -p1
+%patch36 -p1
+%patch37 -p1
+%patch38 -p1
+%patch42 -p1
+%patch43 -p1
+%patch44 -p1
+%patch45 -p1
+%patch46 -p1
+%patch47 -p1
+%patch48 -p1
+%patch49 -p1
 %patch1000 -p0 -b .mingw
 %patch1001 -p0 -b .interlocked
 popd
@@ -531,6 +621,9 @@ mv $RPM_BUILD_ROOT%{mingw64_libdir}/*.dll $RPM_BUILD_ROOT%{mingw64_bindir}
 %{mingw64_libdir}/libboost_test_exec_monitor.a
 
 %changelog
+* Tue Jul 30 2013 Thomas Sailer <t.sailer@alumni.ethz.ch> - 1.54.0-1
+- update to 1.54.0
+
 * Sat Jul 20 2013 Erik van Pienbroek <epienbro@fedoraproject.org> - 1.53.0-2
 - Fix the build when the native libicu-devel is installed
 - Fix FTBFS on recent mingw-w64 and also use intrinsics based

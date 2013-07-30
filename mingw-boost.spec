@@ -209,7 +209,7 @@ pushd win32
 %patch5 -p1
 %patch9 -p1
 %patch15 -p0
-%patch18 -p1
+#patch18 -p1
 %patch19 -p1
 %patch20 -p1
 %patch21 -p1

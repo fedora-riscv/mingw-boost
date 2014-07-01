@@ -2,9 +2,9 @@
 
 %global name1 boost
 Name:           mingw-%{name1}
-Version:        1.54.0
-%global version_enc 1_54_0
-Release:        2%{?dist}
+Version:        1.55.0
+%global version_enc 1_55_0
+Release:        1%{?dist}
 Summary:        MinGW Windows port of Boost C++ Libraries
 
 %global toplev_dirname %{name1}_%{version_enc}
@@ -15,40 +15,15 @@ URL:            http://www.boost.org
 Source0:        http://downloads.sourceforge.net/%{name1}/%{toplev_dirname}.tar.bz2
 
 # https://svn.boost.org/trac/boost/ticket/6150
-Patch4:         boost-1.50.0-fix-non-utf8-files.patch
+Patch4: boost-1.50.0-fix-non-utf8-files.patch
 
-# Add a manual page for the sole executable, namely bjam, based on the
-# on-line documentation:
+# Add a manual page for bjam, based on the on-line documentation:
 # http://www.boost.org/boost-build2/doc/html/bbv2/overview.html
-Patch5:         boost-1.48.0-add-bjam-man-page.patch
-
-# https://bugzilla.redhat.com/show_bug.cgi?id=781859
-# The following tickets have still to be fixed by upstream.
-# https://svn.boost.org/trac/boost/ticket/6408
-# https://svn.boost.org/trac/boost/ticket/6410
-# https://svn.boost.org/trac/boost/ticket/6413
-Patch9: boost-1.53.0-attribute.patch
-
-# https://bugzilla.redhat.com/show_bug.cgi?id=783660
-# https://svn.boost.org/trac/boost/ticket/6459 fixed
-Patch10:        boost-1.50.0-long-double-1.patch
+Patch5: boost-1.48.0-add-bjam-man-page.patch
 
 # https://bugzilla.redhat.com/show_bug.cgi?id=828856
 # https://bugzilla.redhat.com/show_bug.cgi?id=828857
-Patch15:        boost-1.50.0-pool.patch
-
-# https://bugzilla.redhat.com/show_bug.cgi?id=977098
-# https://svn.boost.org/trac/boost/ticket/8731
-Patch18: boost-1.54.0-__GLIBC_HAVE_LONG_LONG.patch
-
-# Upstream patches posted as release notes:
-# http://www.boost.org/users/history/version_1_54_0.html
-Patch19: 001-coroutine.patch
-Patch20: 002-date-time.patch
-Patch21: 003-log.patch
-
-# https://svn.boost.org/trac/boost/ticket/8826
-Patch22: boost-1.54.0-context-execstack.patch
+Patch15: boost-1.50.0-pool.patch
 
 # https://svn.boost.org/trac/boost/ticket/8844
 Patch23: boost-1.54.0-bind-static_assert.patch
@@ -61,10 +36,6 @@ Patch25: boost-1.54.0-mpl-print.patch
 
 # https://svn.boost.org/trac/boost/ticket/8859
 Patch26: boost-1.54.0-static_warning-unused_typedef.patch
-
-# https://svn.boost.org/trac/boost/ticket/8855
-Patch27: boost-1.54.0-math-unused_typedef.patch
-Patch28: boost-1.54.0-math-unused_typedef-2.patch
 
 # https://svn.boost.org/trac/boost/ticket/8853
 Patch31: boost-1.54.0-tuple-unused_typedef.patch
@@ -83,32 +54,32 @@ Patch36: boost-1.54.0-spirit-unused_typedef-2.patch
 # https://svn.boost.org/trac/boost/ticket/8871
 Patch37: boost-1.54.0-numeric-unused_typedef.patch
 
-# https://svn.boost.org/trac/boost/ticket/8872
-Patch38: boost-1.54.0-multiprecision-unused_typedef.patch
-
-# https://svn.boost.org/trac/boost/ticket/8874
-Patch42: boost-1.54.0-unordered-unused_typedef.patch
-
-# https://svn.boost.org/trac/boost/ticket/8876
-Patch43: boost-1.54.0-algorithm-unused_typedef.patch
-
-# https://svn.boost.org/trac/boost/ticket/8877
-Patch44: boost-1.54.0-graph-unused_typedef.patch
-
 # https://svn.boost.org/trac/boost/ticket/8878
 Patch45: boost-1.54.0-locale-unused_typedef.patch
 
 # https://svn.boost.org/trac/boost/ticket/8879
 Patch46: boost-1.54.0-property_tree-unused_typedef.patch
 
-# https://svn.boost.org/trac/boost/ticket/8880
-Patch47: boost-1.54.0-xpressive-unused_typedef.patch
-
-# https://svn.boost.org/trac/boost/ticket/8881
-Patch48: boost-1.54.0-mpi-unused_typedef.patch
-
 # https://svn.boost.org/trac/boost/ticket/8888
 Patch49: boost-1.54.0-python-unused_typedef.patch
+
+# https://svn.boost.org/trac/boost/ticket/9038
+Patch51: boost-1.54.0-pool-test_linking.patch
+
+# This was already fixed upstream, so no tracking bug.
+Patch53: boost-1.54.0-pool-max_chunks_shadow.patch
+
+# https://svn.boost.org/trac/boost/ticket/8725
+Patch54: boost-1.55.0-program_options-class_attribute.patch
+
+# Fixed upstream on Oct 4 00:26:49 2013.
+Patch55: boost-1.55.0-archive-init_order.patch
+
+# https://github.com/boostorg/xpressive/pull/1
+Patch56: boost-1.55.0-xpressive-unused_typedefs.patch
+
+# Fixed upstream on Aug 20 05:11:14 2013.
+Patch57: boost-1.55.0-spirit-unused_typedefs.patch
 
 # https://svn.boost.org/trac/boost/ticket/7262
 Patch1000:      boost-mingw.patch
@@ -207,19 +178,11 @@ pushd win32
 # Fixes
 %patch4 -p1
 %patch5 -p1
-%patch9 -p1
 %patch15 -p0
-#patch18 -p1
-%patch19 -p1
-%patch20 -p1
-%patch21 -p1
-%patch22 -p1
 %patch23 -p1
 %patch24 -p1
 %patch25 -p0
 %patch26 -p1
-%patch27 -p1
-%patch28 -p0
 %patch31 -p0
 %patch32 -p0
 %patch33 -p0
@@ -227,15 +190,15 @@ pushd win32
 %patch35 -p1
 %patch36 -p1
 %patch37 -p1
-%patch38 -p1
-%patch42 -p1
-%patch43 -p1
-%patch44 -p1
 %patch45 -p1
 %patch46 -p1
-%patch47 -p1
-%patch48 -p1
 %patch49 -p1
+%patch51 -p1
+%patch53 -p1
+%patch54 -p1
+%patch55 -p1
+%patch56 -p1
+%patch57 -p1
 %patch1000 -p0 -b .mingw
 %patch1001 -p0 -b .interlocked
 popd
@@ -647,6 +610,9 @@ mv $RPM_BUILD_ROOT%{mingw64_libdir}/*.dll $RPM_BUILD_ROOT%{mingw64_bindir}
 %{mingw64_libdir}/libboost_test_exec_monitor.a
 
 %changelog
+* Mon Jun 30 2014 Thomas Sailer <t.sailer@alumni.ethz.ch> - 1.55.0-1
+- update to 1.55.0
+
 * Sat Jun 07 2014 Fedora Release Engineering <rel-eng@lists.fedoraproject.org> - 1.54.0-2
 - Rebuilt for https://fedoraproject.org/wiki/Fedora_21_Mass_Rebuild
 

@@ -12,19 +12,21 @@
  
 --- libs/context/build/Jamfile.v2.orig	2013-03-03 13:39:59.684868916 +0100
 +++ libs/context/build/Jamfile.v2	2013-03-03 15:09:09.893232829 +0100
-@@ -26,8 +26,9 @@
+@@ -27,9 +27,10 @@
  local rule default_binary_format ( )
  {
      local tmp = elf ;
 -    if [ os.name ] = "MACOSX" { tmp = mach-o ; }
 -    if [ os.name ] = "NT" { tmp = pe ; }
+-    if [ os.name ] = "AIX" { tmp = xcoff ; }
 +#    if [ os.name ] = "MACOSX" { tmp = mach-o ; }
 +#    if [ os.name ] = "NT" { tmp = pe ; }
++#    if [ os.name ] = "AIX" { tmp = xcoff ; }
 +    tmp = pe ;
      return $(tmp) ;
  }
  
-@@ -43,9 +44,10 @@
+@@ -46,9 +47,10 @@
  local rule default_abi ( )
  {
      local tmp = sysv ;
@@ -38,7 +40,7 @@
      return $(tmp) ;
  }
  
-@@ -282,6 +284,17 @@
+@@ -581,6 +583,17 @@
     ;
  
  alias asm_context_sources
@@ -56,7 +58,7 @@
     : asm/make_i386_ms_pe_masm.asm
       asm/jump_i386_ms_pe_masm.asm
       dummy.cpp
-@@ -379,6 +392,17 @@
+@@ -715,6 +728,17 @@
     ;
  
  alias asm_context_sources

@@ -40,10 +40,14 @@
      return $(tmp) ;
  }
  
-@@ -581,6 +583,17 @@
-    ;
- 
- alias asm_context_sources
+@@ -578,6 +580,18 @@
+      <address-model>32
+      <architecture>x86
+      <binary-format>pe
++     <toolset>msvc
++   ;
++
++alias asm_context_sources
 +   : asm/make_i386_ms_pe_gas.S
 +     asm/jump_i386_ms_pe_gas.S
 +     dummy.cpp
@@ -52,16 +56,17 @@
 +     <binary-format>pe
 +     <target-os>windows
 +     <toolset>gcc
-+   ;
-+
-+alias asm_context_sources
-    : asm/make_i386_ms_pe_masm.asm
-      asm/jump_i386_ms_pe_masm.asm
-      dummy.cpp
-@@ -715,6 +728,17 @@
     ;
  
  alias asm_context_sources
+@@ -712,6 +726,18 @@
+      <address-model>64
+      <architecture>x86
+      <binary-format>pe
++     <toolset>msvc
++   ;
++
++alias asm_context_sources
 +   : asm/make_x86_64_ms_pe_gas.S
 +     asm/jump_x86_64_ms_pe_gas.S
 +     dummy.cpp
@@ -70,12 +75,9 @@
 +     <binary-format>pe
 +     <target-os>windows
 +     <toolset>gcc
-+   ;
-+
-+alias asm_context_sources
-    : asm/make_x86_64_ms_pe_masm.asm
-      asm/jump_x86_64_ms_pe_masm.asm
-      dummy.cpp
+    ;
+ 
+ alias asm_context_sources
 --- libs/context/src/asm/make_i386_ms_pe_gas.S.orig	2013-03-03 13:41:28.645502113 +0100
 +++ libs/context/src/asm/make_i386_ms_pe_gas.S	2013-03-03 14:39:27.590477410 +0100
 @@ -0,0 +1,115 @@

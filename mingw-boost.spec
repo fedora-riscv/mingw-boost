@@ -183,8 +183,8 @@ cp -r win32 win64
 %build
 %if 0%{?mingw_build_win32} == 1
 pushd win32
-cat >> ./tools/build/v2/user-config.jam << EOF
-using gcc : : i686-w64-mingw32-g++ ;
+cat >> ./tools/build/src/user-config.jam << EOF
+using gcc : : i686-w64-mingw32-g++ : <rc>/usr/bin/i686-w64-mingw32-windres ;
 EOF
 
 ./bootstrap.sh --with-toolset=gcc --with-icu=%{mingw32_prefix}
@@ -198,8 +198,8 @@ popd
 %endif
 %if 0%{?mingw_build_win64} == 1
 pushd win64
-cat >> ./tools/build/v2/user-config.jam << EOF
-using gcc : : x86_64-w64-mingw32-g++ ;
+cat >> ./tools/build/src/user-config.jam << EOF
+using gcc : : x86_64-w64-mingw32-g++ : <rc>/usr/bin/x86_64-w64-mingw32-windres ;
 EOF
 
 ./bootstrap.sh --with-toolset=gcc --with-icu=%{mingw64_prefix}

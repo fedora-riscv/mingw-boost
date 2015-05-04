@@ -247,6 +247,8 @@ mv $RPM_BUILD_ROOT%{mingw64_libdir}/*.dll $RPM_BUILD_ROOT%{mingw64_bindir}
 %{mingw32_bindir}/libboost_atomic-mt.dll
 %{mingw32_bindir}/libboost_chrono.dll
 %{mingw32_bindir}/libboost_chrono-mt.dll
+%{mingw32_bindir}/libboost_container.dll
+%{mingw32_bindir}/libboost_container-mt.dll
 %{mingw32_bindir}/libboost_context.dll
 %{mingw32_bindir}/libboost_context-mt.dll
 %{mingw32_bindir}/libboost_coroutine.dll
@@ -302,6 +304,8 @@ mv $RPM_BUILD_ROOT%{mingw64_libdir}/*.dll $RPM_BUILD_ROOT%{mingw64_bindir}
 %{mingw32_libdir}/libboost_atomic-mt.dll.a
 %{mingw32_libdir}/libboost_chrono.dll.a
 %{mingw32_libdir}/libboost_chrono-mt.dll.a
+%{mingw32_libdir}/libboost_container.dll.a
+%{mingw32_libdir}/libboost_container-mt.dll.a
 %{mingw32_libdir}/libboost_context.dll.a
 %{mingw32_libdir}/libboost_context-mt.dll.a
 %{mingw32_libdir}/libboost_coroutine.dll.a
@@ -359,6 +363,8 @@ mv $RPM_BUILD_ROOT%{mingw64_libdir}/*.dll $RPM_BUILD_ROOT%{mingw64_bindir}
 %{mingw32_libdir}/libboost_atomic-mt.a
 %{mingw32_libdir}/libboost_chrono.a
 %{mingw32_libdir}/libboost_chrono-mt.a
+%{mingw32_libdir}/libboost_container.a
+%{mingw32_libdir}/libboost_container-mt.a
 %{mingw32_libdir}/libboost_context.a
 %{mingw32_libdir}/libboost_context-mt.a
 %{mingw32_libdir}/libboost_coroutine.a
@@ -424,6 +430,8 @@ mv $RPM_BUILD_ROOT%{mingw64_libdir}/*.dll $RPM_BUILD_ROOT%{mingw64_bindir}
 %{mingw64_bindir}/libboost_atomic-mt.dll
 %{mingw64_bindir}/libboost_chrono.dll
 %{mingw64_bindir}/libboost_chrono-mt.dll
+%{mingw64_bindir}/libboost_container.dll
+%{mingw64_bindir}/libboost_container-mt.dll
 %{mingw64_bindir}/libboost_context.dll
 %{mingw64_bindir}/libboost_context-mt.dll
 %{mingw64_bindir}/libboost_coroutine.dll
@@ -479,6 +487,8 @@ mv $RPM_BUILD_ROOT%{mingw64_libdir}/*.dll $RPM_BUILD_ROOT%{mingw64_bindir}
 %{mingw64_libdir}/libboost_atomic-mt.dll.a
 %{mingw64_libdir}/libboost_chrono.dll.a
 %{mingw64_libdir}/libboost_chrono-mt.dll.a
+%{mingw64_libdir}/libboost_container.dll.a
+%{mingw64_libdir}/libboost_container-mt.dll.a
 %{mingw64_libdir}/libboost_context.dll.a
 %{mingw64_libdir}/libboost_context-mt.dll.a
 %{mingw64_libdir}/libboost_coroutine.dll.a
@@ -536,6 +546,8 @@ mv $RPM_BUILD_ROOT%{mingw64_libdir}/*.dll $RPM_BUILD_ROOT%{mingw64_bindir}
 %{mingw64_libdir}/libboost_atomic-mt.a
 %{mingw64_libdir}/libboost_chrono.a
 %{mingw64_libdir}/libboost_chrono-mt.a
+%{mingw64_libdir}/libboost_container.a
+%{mingw64_libdir}/libboost_container-mt.a
 %{mingw64_libdir}/libboost_context.a
 %{mingw64_libdir}/libboost_context-mt.a
 %{mingw64_libdir}/libboost_coroutine.a

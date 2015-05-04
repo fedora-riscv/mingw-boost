@@ -2,8 +2,8 @@
 
 %global name1 boost
 Name:           mingw-%{name1}
-Version:        1.55.0
-%global version_enc 1_55_0
+Version:        1.57.0
+%global version_enc 1_57_0
 Release:        1%{?dist}
 Summary:        MinGW Windows port of Boost C++ Libraries
 
@@ -23,63 +23,45 @@ Patch5: boost-1.48.0-add-bjam-man-page.patch
 
 # https://bugzilla.redhat.com/show_bug.cgi?id=828856
 # https://bugzilla.redhat.com/show_bug.cgi?id=828857
+# https://svn.boost.org/trac/boost/ticket/6701
 Patch15: boost-1.50.0-pool.patch
 
-# https://svn.boost.org/trac/boost/ticket/8844
-Patch23: boost-1.54.0-bind-static_assert.patch
-
-# https://svn.boost.org/trac/boost/ticket/8847
-Patch24: boost-1.54.0-concept-unused_typedef.patch
-
 # https://svn.boost.org/trac/boost/ticket/5637
-Patch25: boost-1.54.0-mpl-print.patch
-
-# https://svn.boost.org/trac/boost/ticket/8859
-Patch26: boost-1.54.0-static_warning-unused_typedef.patch
-
-# https://svn.boost.org/trac/boost/ticket/8853
-Patch31: boost-1.54.0-tuple-unused_typedef.patch
-
-# https://svn.boost.org/trac/boost/ticket/8854
-Patch32: boost-1.54.0-random-unused_typedef.patch
-
-# https://svn.boost.org/trac/boost/ticket/8856
-Patch33: boost-1.54.0-date_time-unused_typedef.patch
-Patch34: boost-1.54.0-date_time-unused_typedef-2.patch
+Patch25: boost-1.57.0-mpl-print.patch
 
 # https://svn.boost.org/trac/boost/ticket/8870
-Patch35: boost-1.54.0-spirit-unused_typedef.patch
-Patch36: boost-1.54.0-spirit-unused_typedef-2.patch
-
-# https://svn.boost.org/trac/boost/ticket/8871
-Patch37: boost-1.54.0-numeric-unused_typedef.patch
+Patch36: boost-1.57.0-spirit-unused_typedef.patch
 
 # https://svn.boost.org/trac/boost/ticket/8878
 Patch45: boost-1.54.0-locale-unused_typedef.patch
-
-# https://svn.boost.org/trac/boost/ticket/8879
-Patch46: boost-1.54.0-property_tree-unused_typedef.patch
 
 # https://svn.boost.org/trac/boost/ticket/8888
 Patch49: boost-1.54.0-python-unused_typedef.patch
 
 # https://svn.boost.org/trac/boost/ticket/9038
-Patch51: boost-1.54.0-pool-test_linking.patch
+Patch51: boost-1.57.0-pool-test_linking.patch
 
 # This was already fixed upstream, so no tracking bug.
 Patch53: boost-1.54.0-pool-max_chunks_shadow.patch
 
-# https://svn.boost.org/trac/boost/ticket/8725
-Patch54: boost-1.55.0-program_options-class_attribute.patch
+# https://bugzilla.redhat.com/show_bug.cgi?id=1102667
+Patch61: boost-1.57.0-python-libpython_dep.patch
+Patch62: boost-1.57.0-python-abi_letters.patch
+Patch63: boost-1.55.0-python-test-PyImport_AppendInittab.patch
 
-# Fixed upstream on Oct 4 00:26:49 2013.
-Patch55: boost-1.55.0-archive-init_order.patch
+# https://svn.boost.org/trac/boost/ticket/10100
+# https://github.com/boostorg/signals2/pull/8
+Patch64: boost-1.57.0-signals2-weak_ptr.patch
 
-# https://github.com/boostorg/xpressive/pull/1
-Patch56: boost-1.55.0-xpressive-unused_typedefs.patch
+# https://bugzilla.redhat.com/show_bug.cgi?id=1190039
+Patch65: boost-1.57.0-build-optflags.patch
 
-# Fixed upstream on Aug 20 05:11:14 2013.
-Patch57: boost-1.55.0-spirit-unused_typedefs.patch
+# https://svn.boost.org/trac/boost/ticket/10510
+Patch66: boost-1.57.0-uuid-comparison.patch
+
+# https://bugzilla.redhat.com/show_bug.cgi?id=1192002
+# https://svn.boost.org/trac/boost/ticket/11044
+Patch67: boost-1.57.0-move-is_class.patch
 
 # https://svn.boost.org/trac/boost/ticket/7262
 Patch1000:      boost-mingw.patch
@@ -179,26 +161,19 @@ pushd win32
 %patch4 -p1
 %patch5 -p1
 %patch15 -p0
-%patch23 -p1
-%patch24 -p1
-%patch25 -p0
-%patch26 -p1
-%patch31 -p0
-%patch32 -p0
-%patch33 -p0
-%patch34 -p1
-%patch35 -p1
+%patch25 -p1
 %patch36 -p1
-%patch37 -p1
 %patch45 -p1
-%patch46 -p1
 %patch49 -p1
 %patch51 -p1
 %patch53 -p1
-%patch54 -p1
-%patch55 -p1
-%patch56 -p1
-%patch57 -p1
+%patch61 -p1
+%patch62 -p1
+%patch63 -p1
+%patch64 -p2
+%patch65 -p1
+%patch66 -p2
+%patch67 -p0
 %patch1000 -p0 -b .mingw
 %patch1001 -p0 -b .interlocked
 popd
@@ -620,6 +595,9 @@ mv $RPM_BUILD_ROOT%{mingw64_libdir}/*.dll $RPM_BUILD_ROOT%{mingw64_bindir}
 %{mingw64_libdir}/libboost_test_exec_monitor.a
 
 %changelog
+* Mon May  4 2015 Thomas Sailer <t.sailer@alumni.ethz.ch> - 1.57.0-1
+- update to 1.57.0
+
 * Mon Jun 30 2014 Thomas Sailer <t.sailer@alumni.ethz.ch> - 1.55.0-1
 - update to 1.55.0
 

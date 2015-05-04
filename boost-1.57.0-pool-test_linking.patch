@@ -1,8 +1,8 @@
-diff -up ./libs/pool/test/Jamfile.v2~ ./libs/pool/test/Jamfile.v2
---- ./libs/pool/test/Jamfile.v2~	2011-08-02 19:04:07.000000000 +0200
-+++ ./libs/pool/test/Jamfile.v2	2013-08-22 11:48:34.907287286 +0200
-@@ -24,17 +24,17 @@ run valgrind_config_check.cpp : : : <tes
- explicit valgrind_config_check ;
+diff -up boost_1_57_0/libs/pool/test/Jamfile.v2\~ boost_1_57_0/libs/pool/test/Jamfile.v2
+--- boost_1_57_0/libs/pool/test/Jamfile.v2~	2014-07-10 06:36:10.000000000 +0200
++++ boost_1_57_0/libs/pool/test/Jamfile.v2	2015-01-20 13:59:10.818700586 +0100
+@@ -28,17 +28,17 @@ explicit valgrind_config_check ;
+ local use-valgrind = [ check-target-builds valgrind_config_check "valgrind" : <testing.launcher>"valgrind --error-exitcode=1" : <build>no ] ;
  
  test-suite pool :
 -    [ run test_simple_seg_storage.cpp ]
@@ -29,3 +29,5 @@ diff -up ./libs/pool/test/Jamfile.v2~ ./libs/pool/test/Jamfile.v2
      [ compile test_poisoned_macros.cpp ]
  
  #
+
+Diff finished.  Tue Jan 20 13:59:16 2015

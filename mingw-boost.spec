@@ -286,7 +286,6 @@ mv $RPM_BUILD_ROOT%{mingw64_libdir}/*.dll $RPM_BUILD_ROOT%{mingw64_bindir}
 %{mingw32_bindir}/libboost_timer-mt.dll
 %{mingw32_bindir}/libboost_unit_test_framework.dll
 %{mingw32_bindir}/libboost_unit_test_framework-mt.dll
-%{mingw32_bindir}/libboost_wave.dll
 %{mingw32_bindir}/libboost_wave-mt.dll
 %{mingw32_bindir}/libboost_wserialization.dll
 %{mingw32_bindir}/libboost_wserialization-mt.dll
@@ -342,7 +341,6 @@ mv $RPM_BUILD_ROOT%{mingw64_libdir}/*.dll $RPM_BUILD_ROOT%{mingw64_bindir}
 %{mingw32_libdir}/libboost_timer-mt.dll.a
 %{mingw32_libdir}/libboost_unit_test_framework.dll.a
 %{mingw32_libdir}/libboost_unit_test_framework-mt.dll.a
-%{mingw32_libdir}/libboost_wave.dll.a
 %{mingw32_libdir}/libboost_wave-mt.dll.a
 %{mingw32_libdir}/libboost_wserialization.dll.a
 %{mingw32_libdir}/libboost_wserialization-mt.dll.a
@@ -400,7 +398,6 @@ mv $RPM_BUILD_ROOT%{mingw64_libdir}/*.dll $RPM_BUILD_ROOT%{mingw64_bindir}
 %{mingw32_libdir}/libboost_timer-mt.a
 %{mingw32_libdir}/libboost_unit_test_framework.a
 %{mingw32_libdir}/libboost_unit_test_framework-mt.a
-%{mingw32_libdir}/libboost_wave.a
 %{mingw32_libdir}/libboost_wave-mt.a
 %{mingw32_libdir}/libboost_wserialization.a
 %{mingw32_libdir}/libboost_wserialization-mt.a
@@ -466,7 +463,6 @@ mv $RPM_BUILD_ROOT%{mingw64_libdir}/*.dll $RPM_BUILD_ROOT%{mingw64_bindir}
 %{mingw64_bindir}/libboost_timer-mt.dll
 %{mingw64_bindir}/libboost_unit_test_framework.dll
 %{mingw64_bindir}/libboost_unit_test_framework-mt.dll
-%{mingw64_bindir}/libboost_wave.dll
 %{mingw64_bindir}/libboost_wave-mt.dll
 %{mingw64_bindir}/libboost_wserialization.dll
 %{mingw64_bindir}/libboost_wserialization-mt.dll
@@ -522,7 +518,6 @@ mv $RPM_BUILD_ROOT%{mingw64_libdir}/*.dll $RPM_BUILD_ROOT%{mingw64_bindir}
 %{mingw64_libdir}/libboost_timer-mt.dll.a
 %{mingw64_libdir}/libboost_unit_test_framework.dll.a
 %{mingw64_libdir}/libboost_unit_test_framework-mt.dll.a
-%{mingw64_libdir}/libboost_wave.dll.a
 %{mingw64_libdir}/libboost_wave-mt.dll.a
 %{mingw64_libdir}/libboost_wserialization.dll.a
 %{mingw64_libdir}/libboost_wserialization-mt.dll.a
@@ -580,7 +575,6 @@ mv $RPM_BUILD_ROOT%{mingw64_libdir}/*.dll $RPM_BUILD_ROOT%{mingw64_bindir}
 %{mingw64_libdir}/libboost_timer-mt.a
 %{mingw64_libdir}/libboost_unit_test_framework.a
 %{mingw64_libdir}/libboost_unit_test_framework-mt.a
-%{mingw64_libdir}/libboost_wave.a
 %{mingw64_libdir}/libboost_wave-mt.a
 %{mingw64_libdir}/libboost_wserialization.a
 %{mingw64_libdir}/libboost_wserialization-mt.a

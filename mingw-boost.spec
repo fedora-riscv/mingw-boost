@@ -2,9 +2,9 @@
 
 %global name1 boost
 Name:           mingw-%{name1}
-Version:        1.57.0
-%global version_enc 1_57_0
-Release:        2%{?dist}
+Version:        1.58.0
+%global version_enc 1_58_0
+Release:        1%{?dist}
 Summary:        MinGW Windows port of Boost C++ Libraries
 
 %global toplev_dirname %{name1}_%{version_enc}
@@ -24,7 +24,7 @@ Patch5: boost-1.48.0-add-bjam-man-page.patch
 # https://bugzilla.redhat.com/show_bug.cgi?id=828856
 # https://bugzilla.redhat.com/show_bug.cgi?id=828857
 # https://svn.boost.org/trac/boost/ticket/6701
-Patch15: boost-1.50.0-pool.patch
+Patch15: boost-1.58.0-pool.patch
 
 # https://svn.boost.org/trac/boost/ticket/5637
 Patch25: boost-1.57.0-mpl-print.patch
@@ -39,19 +39,12 @@ Patch45: boost-1.54.0-locale-unused_typedef.patch
 Patch49: boost-1.54.0-python-unused_typedef.patch
 
 # https://svn.boost.org/trac/boost/ticket/9038
-Patch51: boost-1.57.0-pool-test_linking.patch
-
-# This was already fixed upstream, so no tracking bug.
-Patch53: boost-1.54.0-pool-max_chunks_shadow.patch
+Patch51: boost-1.58.0-pool-test_linking.patch
 
 # https://bugzilla.redhat.com/show_bug.cgi?id=1102667
 Patch61: boost-1.57.0-python-libpython_dep.patch
 Patch62: boost-1.57.0-python-abi_letters.patch
 Patch63: boost-1.55.0-python-test-PyImport_AppendInittab.patch
-
-# https://svn.boost.org/trac/boost/ticket/10100
-# https://github.com/boostorg/signals2/pull/8
-Patch64: boost-1.57.0-signals2-weak_ptr.patch
 
 # https://bugzilla.redhat.com/show_bug.cgi?id=1190039
 Patch65: boost-1.57.0-build-optflags.patch
@@ -59,9 +52,19 @@ Patch65: boost-1.57.0-build-optflags.patch
 # https://svn.boost.org/trac/boost/ticket/10510
 Patch66: boost-1.57.0-uuid-comparison.patch
 
-# https://bugzilla.redhat.com/show_bug.cgi?id=1192002
-# https://svn.boost.org/trac/boost/ticket/11044
-Patch67: boost-1.57.0-move-is_class.patch
+# https://svn.boost.org/trac/boost/ticket/11283
+Patch67: boost-1.58.0-variant-includes.patch
+
+# Prevent gcc.jam from setting -m32 or -m64.
+Patch68: boost-1.58.0-address-model.patch
+
+# https://github.com/boostorg/ublas/pull/25
+Patch69: boost-1.58-ublas-inlines.patch
+
+Patch70: 0001-Changes-required-for-aarch64-support-in-boost-config.patch
+
+#http://www.boost.org/patches/1_58_0/0002-Fix-a-regression-with-non-constexpr-types.patch
+Patch80: 0002-Fix-a-regression-with-non-constexpr-types.patch
 
 # https://svn.boost.org/trac/boost/ticket/7262
 Patch1000:      boost-mingw.patch
@@ -166,14 +169,16 @@ pushd win32
 %patch45 -p1
 %patch49 -p1
 %patch51 -p1
-%patch53 -p1
 %patch61 -p1
 %patch62 -p1
 %patch63 -p1
-%patch64 -p2
 %patch65 -p1
 %patch66 -p2
-%patch67 -p0
+%patch67 -p2
+%patch68 -p1
+%patch69 -p2
+%patch70 -p1
+%patch80 -p2
 %patch1000 -p0 -b .mingw
 %patch1001 -p0 -b .interlocked
 popd
@@ -607,6 +612,9 @@ mv $RPM_BUILD_ROOT%{mingw64_libdir}/*.dll $RPM_BUILD_ROOT%{mingw64_bindir}
 %{mingw64_libdir}/libboost_test_exec_monitor.a
 
 %changelog
+* Wed Sep 02 2015 Thomas Sailer <t.sailer@alumni.ethz.ch> - 1.58.0-1
+- update to 1.58.0
+
 * Wed Jun 17 2015 Fedora Release Engineering <rel-eng@lists.fedoraproject.org> - 1.57.0-2
 - Rebuilt for https://fedoraproject.org/wiki/Fedora_23_Mass_Rebuild
 

@@ -2,8 +2,8 @@
 
 %global name1 boost
 Name:           mingw-%{name1}
-Version:        1.58.0
-%global version_enc 1_58_0
+Version:        1.59.0
+%global version_enc 1_59_0
 Release:        1%{?dist}
 Summary:        MinGW Windows port of Boost C++ Libraries
 
@@ -35,9 +35,6 @@ Patch36: boost-1.57.0-spirit-unused_typedef.patch
 # https://svn.boost.org/trac/boost/ticket/8878
 Patch45: boost-1.54.0-locale-unused_typedef.patch
 
-# https://svn.boost.org/trac/boost/ticket/8888
-Patch49: boost-1.54.0-python-unused_typedef.patch
-
 # https://svn.boost.org/trac/boost/ticket/9038
 Patch51: boost-1.58.0-pool-test_linking.patch
 
@@ -49,22 +46,11 @@ Patch63: boost-1.55.0-python-test-PyImport_AppendInittab.patch
 # https://bugzilla.redhat.com/show_bug.cgi?id=1190039
 Patch65: boost-1.57.0-build-optflags.patch
 
-# https://svn.boost.org/trac/boost/ticket/10510
-Patch66: boost-1.57.0-uuid-comparison.patch
-
-# https://svn.boost.org/trac/boost/ticket/11283
-Patch67: boost-1.58.0-variant-includes.patch
-
 # Prevent gcc.jam from setting -m32 or -m64.
 Patch68: boost-1.58.0-address-model.patch
 
-# https://github.com/boostorg/ublas/pull/25
-Patch69: boost-1.58-ublas-inlines.patch
-
-Patch70: 0001-Changes-required-for-aarch64-support-in-boost-config.patch
-
-#http://www.boost.org/patches/1_58_0/0002-Fix-a-regression-with-non-constexpr-types.patch
-Patch80: 0002-Fix-a-regression-with-non-constexpr-types.patch
+# https://svn.boost.org/trac/boost/ticket/11549
+Patch70: boost-1.59.0-log.patch
 
 # https://svn.boost.org/trac/boost/ticket/7262
 Patch1000:      boost-mingw.patch
@@ -167,18 +153,13 @@ pushd win32
 %patch25 -p1
 %patch36 -p1
 %patch45 -p1
-%patch49 -p1
 %patch51 -p1
 %patch61 -p1
 %patch62 -p1
 %patch63 -p1
 %patch65 -p1
-%patch66 -p2
-%patch67 -p2
 %patch68 -p1
-%patch69 -p2
-%patch70 -p1
-%patch80 -p2
+%patch70 -p2
 %patch1000 -p0 -b .mingw
 %patch1001 -p0 -b .interlocked
 popd
@@ -606,6 +587,9 @@ mv $RPM_BUILD_ROOT%{mingw64_libdir}/*.dll $RPM_BUILD_ROOT%{mingw64_bindir}
 %{mingw64_libdir}/libboost_test_exec_monitor.a
 
 %changelog
+* Wed Sep 02 2015 Thomas Sailer <t.sailer@alumni.ethz.ch> - 1.59.0-1
+- update to 1.59.0
+
 * Wed Sep 02 2015 Thomas Sailer <t.sailer@alumni.ethz.ch> - 1.58.0-1
 - update to 1.58.0
 

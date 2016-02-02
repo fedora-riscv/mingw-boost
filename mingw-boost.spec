@@ -2,8 +2,8 @@
 
 %global name1 boost
 Name:           mingw-%{name1}
-Version:        1.59.0
-%global version_enc 1_59_0
+Version:        1.60.0
+%global version_enc 1_60_0
 Release:        1%{?dist}
 Summary:        MinGW Windows port of Boost C++ Libraries
 
@@ -32,9 +32,6 @@ Patch25: boost-1.57.0-mpl-print.patch
 # https://svn.boost.org/trac/boost/ticket/8870
 Patch36: boost-1.57.0-spirit-unused_typedef.patch
 
-# https://svn.boost.org/trac/boost/ticket/8878
-Patch45: boost-1.54.0-locale-unused_typedef.patch
-
 # https://svn.boost.org/trac/boost/ticket/9038
 Patch51: boost-1.58.0-pool-test_linking.patch
 
@@ -49,18 +46,12 @@ Patch65: boost-1.57.0-build-optflags.patch
 # Prevent gcc.jam from setting -m32 or -m64.
 Patch68: boost-1.58.0-address-model.patch
 
-# https://svn.boost.org/trac/boost/ticket/11549
-Patch70: boost-1.59.0-log.patch
-
 # https://svn.boost.org/trac/boost/ticket/7262
 Patch1000:      boost-mingw.patch
 
 # Fix FTBFS on recent mingw-w64 and also use intrinsics based
 # versions of the Interlocked symbols which are better optimized
 Patch1001:      boost-include-intrin-h-on-mingw-w64.patch
-
-# https://github.com/boostorg/serialization/pull/19
-Patch1002:      boost-mingw-1.59.0-serialization.patch
 
 BuildArch:      noarch
 
@@ -155,17 +146,14 @@ pushd win32
 %patch15 -p0
 %patch25 -p1
 %patch36 -p1
-%patch45 -p1
 %patch51 -p1
 %patch61 -p1
 %patch62 -p1
 %patch63 -p1
 %patch65 -p1
 %patch68 -p1
-%patch70 -p2
 %patch1000 -p0 -b .mingw
 %patch1001 -p0 -b .interlocked
-%patch1002 -p1 -b .serialization
 popd
 
 cp -r win32 win64
@@ -585,6 +573,9 @@ mv $RPM_BUILD_ROOT%{mingw64_libdir}/*.dll $RPM_BUILD_ROOT%{mingw64_bindir}
 %{mingw64_libdir}/libboost_test_exec_monitor.a
 
 %changelog
+* Tue Feb 02 2016 Thomas Sailer <t.sailer@alumni.ethz.ch> - 1.60.0-1
+- update to 1.60.0
+
 * Wed Sep 02 2015 Thomas Sailer <t.sailer@alumni.ethz.ch> - 1.59.0-1
 - update to 1.59.0
 

@@ -272,6 +272,8 @@ mv $RPM_BUILD_ROOT%{mingw64_libdir}/*.dll $RPM_BUILD_ROOT%{mingw64_bindir}
 %{mingw32_bindir}/libboost_thread-mt.dll
 %{mingw32_bindir}/libboost_timer.dll
 %{mingw32_bindir}/libboost_timer-mt.dll
+%{mingw32_bindir}/libboost_type_erasure.dll
+%{mingw32_bindir}/libboost_type_erasure-mt.dll
 %{mingw32_bindir}/libboost_unit_test_framework.dll
 %{mingw32_bindir}/libboost_unit_test_framework-mt.dll
 %{mingw32_bindir}/libboost_wave-mt.dll
@@ -327,6 +329,8 @@ mv $RPM_BUILD_ROOT%{mingw64_libdir}/*.dll $RPM_BUILD_ROOT%{mingw64_bindir}
 %{mingw32_libdir}/libboost_thread-mt.dll.a
 %{mingw32_libdir}/libboost_timer.dll.a
 %{mingw32_libdir}/libboost_timer-mt.dll.a
+%{mingw32_libdir}/libboost_type_erasure.dll.a
+%{mingw32_libdir}/libboost_type_erasure-mt.dll.a
 %{mingw32_libdir}/libboost_unit_test_framework.dll.a
 %{mingw32_libdir}/libboost_unit_test_framework-mt.dll.a
 %{mingw32_libdir}/libboost_wave-mt.dll.a
@@ -384,6 +388,8 @@ mv $RPM_BUILD_ROOT%{mingw64_libdir}/*.dll $RPM_BUILD_ROOT%{mingw64_bindir}
 %{mingw32_libdir}/libboost_thread-mt.a
 %{mingw32_libdir}/libboost_timer.a
 %{mingw32_libdir}/libboost_timer-mt.a
+%{mingw32_libdir}/libboost_type_erasure.a
+%{mingw32_libdir}/libboost_type_erasure-mt.a
 %{mingw32_libdir}/libboost_unit_test_framework.a
 %{mingw32_libdir}/libboost_unit_test_framework-mt.a
 %{mingw32_libdir}/libboost_wave-mt.a
@@ -449,6 +455,8 @@ mv $RPM_BUILD_ROOT%{mingw64_libdir}/*.dll $RPM_BUILD_ROOT%{mingw64_bindir}
 %{mingw64_bindir}/libboost_thread-mt.dll
 %{mingw64_bindir}/libboost_timer.dll
 %{mingw64_bindir}/libboost_timer-mt.dll
+%{mingw64_bindir}/libboost_type_erasure.dll
+%{mingw64_bindir}/libboost_type_erasure-mt.dll
 %{mingw64_bindir}/libboost_unit_test_framework.dll
 %{mingw64_bindir}/libboost_unit_test_framework-mt.dll
 %{mingw64_bindir}/libboost_wave-mt.dll
@@ -504,6 +512,8 @@ mv $RPM_BUILD_ROOT%{mingw64_libdir}/*.dll $RPM_BUILD_ROOT%{mingw64_bindir}
 %{mingw64_libdir}/libboost_thread-mt.dll.a
 %{mingw64_libdir}/libboost_timer.dll.a
 %{mingw64_libdir}/libboost_timer-mt.dll.a
+%{mingw64_libdir}/libboost_type_erasure.dll.a
+%{mingw64_libdir}/libboost_type_erasure-mt.dll.a
 %{mingw64_libdir}/libboost_unit_test_framework.dll.a
 %{mingw64_libdir}/libboost_unit_test_framework-mt.dll.a
 %{mingw64_libdir}/libboost_wave-mt.dll.a
@@ -561,6 +571,8 @@ mv $RPM_BUILD_ROOT%{mingw64_libdir}/*.dll $RPM_BUILD_ROOT%{mingw64_bindir}
 %{mingw64_libdir}/libboost_thread-mt.a
 %{mingw64_libdir}/libboost_timer.a
 %{mingw64_libdir}/libboost_timer-mt.a
+%{mingw64_libdir}/libboost_type_erasure.a
+%{mingw64_libdir}/libboost_type_erasure-mt.a
 %{mingw64_libdir}/libboost_unit_test_framework.a
 %{mingw64_libdir}/libboost_unit_test_framework-mt.a
 %{mingw64_libdir}/libboost_wave-mt.a

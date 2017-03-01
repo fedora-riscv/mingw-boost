@@ -55,6 +55,9 @@ Patch1000:      boost-mingw.patch
 # versions of the Interlocked symbols which are better optimized
 Patch1001:      boost-include-intrin-h-on-mingw-w64.patch
 
+# https://github.com/boostorg/serialization/pull/42
+Patch1002:      boost-1.63.0-codecvtwchar.patch
+
 BuildArch:      noarch
 
 BuildRequires:  file
@@ -156,6 +159,7 @@ pushd win32
 %patch83 -p1
 %patch1000 -p0 -b .mingw
 %patch1001 -p0 -b .interlocked
+%patch1002 -p1 -b .codecvtwchar
 popd
 
 cp -r win32 win64

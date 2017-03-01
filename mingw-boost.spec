@@ -2,9 +2,9 @@
 
 %global name1 boost
 Name:           mingw-%{name1}
-Version:        1.60.0
-%global version_enc 1_60_0
-Release:        2%{?dist}
+Version:        1.63.0
+%global version_enc 1_63_0
+Release:        1%{?dist}
 Summary:        MinGW Windows port of Boost C++ Libraries
 
 %global toplev_dirname %{name1}_%{version_enc}
@@ -29,22 +29,24 @@ Patch15: boost-1.58.0-pool.patch
 # https://svn.boost.org/trac/boost/ticket/5637
 Patch25: boost-1.57.0-mpl-print.patch
 
-# https://svn.boost.org/trac/boost/ticket/8870
-Patch36: boost-1.57.0-spirit-unused_typedef.patch
-
 # https://svn.boost.org/trac/boost/ticket/9038
 Patch51: boost-1.58.0-pool-test_linking.patch
 
 # https://bugzilla.redhat.com/show_bug.cgi?id=1102667
 Patch61: boost-1.57.0-python-libpython_dep.patch
 Patch62: boost-1.57.0-python-abi_letters.patch
-Patch63: boost-1.55.0-python-test-PyImport_AppendInittab.patch
 
 # https://bugzilla.redhat.com/show_bug.cgi?id=1190039
 Patch65: boost-1.57.0-build-optflags.patch
 
 # Prevent gcc.jam from setting -m32 or -m64.
 Patch68: boost-1.58.0-address-model.patch
+
+# https://bugzilla.redhat.com/show_bug.cgi?id=1318383
+Patch82: boost-1.60.0-no-rpath.patch
+
+# https://github.com/boostorg/build/issues/163
+Patch83: boost-1.63.0-dual-python-build.patch
 
 # https://svn.boost.org/trac/boost/ticket/7262
 Patch1000:      boost-mingw.patch
@@ -145,13 +147,13 @@ pushd win32
 %patch5 -p1
 %patch15 -p0
 %patch25 -p1
-%patch36 -p1
 %patch51 -p1
 %patch61 -p1
 %patch62 -p1
-%patch63 -p1
 %patch65 -p1
 %patch68 -p1
+%patch82 -p0
+%patch83 -p1
 %patch1000 -p0 -b .mingw
 %patch1001 -p0 -b .interlocked
 popd
@@ -585,6 +587,9 @@ mv $RPM_BUILD_ROOT%{mingw64_libdir}/*.dll $RPM_BUILD_ROOT%{mingw64_bindir}
 %{mingw64_libdir}/libboost_test_exec_monitor.a
 
 %changelog
+* Wed Mar 01 2017 Thomas Sailer <t.sailer@alumni.ethz.ch> - 1.63.0-1
+- update to 1.63.0
+
 * Fri Feb 10 2017 Fedora Release Engineering <releng@fedoraproject.org> - 1.60.0-2
 - Rebuilt for https://fedoraproject.org/wiki/Fedora_26_Mass_Rebuild
 

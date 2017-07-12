@@ -79,7 +79,7 @@ BuildRequires:  mingw64-zlib
 BuildRequires:  mingw64-expat
 BuildRequires:  mingw64-pthreads
 
-BuildRequires:  perl
+BuildRequires:  perl-interpreter
 # These are required by the native package:
 #BuildRequires:  mingw32-python
 #BuildRequires:  mingw32-libicu

@@ -4,7 +4,7 @@
 Name:           mingw-%{name1}
 Version:        1.63.0
 %global version_enc 1_63_0
-Release:        1%{?dist}
+Release:        2%{?dist}
 Summary:        MinGW Windows port of Boost C++ Libraries
 
 %global toplev_dirname %{name1}_%{version_enc}
@@ -591,6 +591,9 @@ mv $RPM_BUILD_ROOT%{mingw64_libdir}/*.dll $RPM_BUILD_ROOT%{mingw64_bindir}
 %{mingw64_libdir}/libboost_test_exec_monitor.a
 
 %changelog
+* Wed Jul 26 2017 Fedora Release Engineering <releng@fedoraproject.org> - 1.63.0-2
+- Rebuilt for https://fedoraproject.org/wiki/Fedora_27_Mass_Rebuild
+
 * Wed Mar 01 2017 Thomas Sailer <t.sailer@alumni.ethz.ch> - 1.63.0-1
 - update to 1.63.0
 

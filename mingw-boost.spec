@@ -46,7 +46,7 @@ Patch68: boost-1.58.0-address-model.patch
 Patch82: boost-1.60.0-no-rpath.patch
 
 # https://github.com/boostorg/build/issues/163
-Patch83: boost-1.63.0-dual-python-build.patch
+Patch83: boost-1.63.0-dual-python-build-v2.patch
 
 # https://github.com/boostorg/mpi/pull/39
 Patch84: boost-1.64.0-mpi-get_data.patch

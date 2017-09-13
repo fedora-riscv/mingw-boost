@@ -2,9 +2,9 @@
 
 %global name1 boost
 Name:           mingw-%{name1}
-Version:        1.63.0
-%global version_enc 1_63_0
-Release:        2%{?dist}
+Version:        1.64.0
+%global version_enc 1_64_0
+Release:        1%{?dist}
 Summary:        MinGW Windows port of Boost C++ Libraries
 
 %global toplev_dirname %{name1}_%{version_enc}
@@ -47,6 +47,17 @@ Patch82: boost-1.60.0-no-rpath.patch
 
 # https://github.com/boostorg/build/issues/163
 Patch83: boost-1.63.0-dual-python-build.patch
+
+# https://github.com/boostorg/mpi/pull/39
+Patch84: boost-1.64.0-mpi-get_data.patch
+
+# https://svn.boost.org/trac10/ticket/12516
+# https://github.com/boostorg/serialization/commit/1d86261581230e2dc5d617a9b16287d326f3e229
+Patch85: boost-1.64.0-serialization-make_array.patch
+
+# https://bugzilla.redhat.com/show_bug.cgi?id=1485641
+# https://github.com/boostorg/icl/pull/9
+Patch86: boost-1.64.0-icl-ttp-matching.patch
 
 # https://svn.boost.org/trac/boost/ticket/7262
 Patch1000:      boost-mingw.patch
@@ -157,6 +168,9 @@ pushd win32
 %patch68 -p1
 %patch82 -p0
 %patch83 -p1
+%patch84 -p2
+%patch85 -p2
+%patch86 -p2
 %patch1000 -p0 -b .mingw
 %patch1001 -p0 -b .interlocked
 %patch1002 -p1 -b .codecvtwchar
@@ -591,6 +605,9 @@ mv $RPM_BUILD_ROOT%{mingw64_libdir}/*.dll $RPM_BUILD_ROOT%{mingw64_bindir}
 %{mingw64_libdir}/libboost_test_exec_monitor.a
 
 %changelog
+* Wed Sep 13 2017 Thomas Sailer <t.sailer@alumni.ethz.ch> - 1.64.0-1
+- update to 1.64.0
+
 * Wed Jul 26 2017 Fedora Release Engineering <releng@fedoraproject.org> - 1.63.0-2
 - Rebuilt for https://fedoraproject.org/wiki/Fedora_27_Mass_Rebuild
 

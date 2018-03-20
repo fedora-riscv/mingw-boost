@@ -2,9 +2,9 @@
 
 %global name1 boost
 Name:           mingw-%{name1}
-Version:        1.64.0
-%global version_enc 1_64_0
-Release:        2%{?dist}
+Version:        1.66.0
+%global version_enc 1_66_0
+Release:        1%{?dist}
 Summary:        MinGW Windows port of Boost C++ Libraries
 
 %global toplev_dirname %{name1}_%{version_enc}
@@ -34,30 +34,22 @@ Patch51: boost-1.58.0-pool-test_linking.patch
 
 # https://bugzilla.redhat.com/show_bug.cgi?id=1102667
 Patch61: boost-1.57.0-python-libpython_dep.patch
-Patch62: boost-1.57.0-python-abi_letters.patch
+Patch62: boost-1.66.0-python-abi_letters.patch
 
 # https://bugzilla.redhat.com/show_bug.cgi?id=1190039
-Patch65: boost-1.57.0-build-optflags.patch
+Patch65: boost-1.66.0-build-optflags.patch
 
 # Prevent gcc.jam from setting -m32 or -m64.
-Patch68: boost-1.58.0-address-model.patch
+Patch68: boost-1.66.0-address-model.patch
 
 # https://bugzilla.redhat.com/show_bug.cgi?id=1318383
-Patch82: boost-1.60.0-no-rpath.patch
+Patch82: boost-1.66.0-no-rpath.patch
 
-# https://github.com/boostorg/build/issues/163
-Patch83: boost-1.63.0-dual-python-build-v2.patch
+# https://bugzilla.redhat.com/show_bug.cgi?id=1541035
+Patch83: boost-1.66.0-bjam-build-flags.patch
 
-# https://github.com/boostorg/mpi/pull/39
-Patch84: boost-1.64.0-mpi-get_data.patch
-
-# https://svn.boost.org/trac10/ticket/12516
-# https://github.com/boostorg/serialization/commit/1d86261581230e2dc5d617a9b16287d326f3e229
-Patch85: boost-1.64.0-serialization-make_array.patch
-
-# https://bugzilla.redhat.com/show_bug.cgi?id=1485641
-# https://github.com/boostorg/icl/pull/9
-Patch86: boost-1.64.0-icl-ttp-matching.patch
+# https://bugzilla.redhat.com/show_bug.cgi?id=1545092
+Patch84: boost-1.66.0-spirit-abs-overflow.patch
 
 # https://svn.boost.org/trac/boost/ticket/7262
 Patch1000:      boost-mingw.patch
@@ -166,11 +158,9 @@ pushd win32
 %patch62 -p1
 %patch65 -p1
 %patch68 -p1
-%patch82 -p0
+%patch82 -p1
 %patch83 -p1
-%patch84 -p2
-%patch85 -p2
-%patch86 -p2
+%patch84 -p1
 %patch1000 -p0 -b .mingw
 %patch1001 -p0 -b .interlocked
 %patch1002 -p1 -b .codecvtwchar
@@ -191,7 +181,7 @@ echo ============================= build serial ==================
 ./b2 -d+2 -q %{?_smp_mflags} --layout=tagged \
 	--without-mpi --without-graph_parallel --without-python --build-dir=serial \
 	variant=release threading=single,multi debug-symbols=on pch=off \
-	link=shared,static target-os=windows stage
+	link=shared,static target-os=windows address-model=32 stage
 popd
 %endif
 %if 0%{?mingw_build_win64} == 1
@@ -206,7 +196,7 @@ echo ============================= build serial ==================
 ./b2 -d+2 -q %{?_smp_mflags} --layout=tagged \
 	--without-mpi --without-graph_parallel --without-python --build-dir=serial \
 	variant=release threading=single,multi debug-symbols=on pch=off \
-	link=shared,static target-os=windows stage
+	link=shared,static target-os=windows address-model=64 stage
 popd
 %endif
 
@@ -219,7 +209,7 @@ echo ============================= install serial ==================
 	--prefix=$RPM_BUILD_ROOT%{mingw32_prefix} \
 	--libdir=$RPM_BUILD_ROOT%{mingw32_libdir} \
 	variant=release threading=single,multi debug-symbols=on pch=off \
-	link=shared,static target-os=windows install
+	link=shared,static target-os=windows address-model=32 install
 popd
 mkdir -p $RPM_BUILD_ROOT%{mingw32_bindir}
 mv $RPM_BUILD_ROOT%{mingw32_libdir}/*.dll $RPM_BUILD_ROOT%{mingw32_bindir}
@@ -232,7 +222,7 @@ echo ============================= install serial ==================
 	--prefix=$RPM_BUILD_ROOT%{mingw64_prefix} \
 	--libdir=$RPM_BUILD_ROOT%{mingw64_libdir} \
 	variant=release threading=single,multi debug-symbols=on pch=off \
-	link=shared,static target-os=windows install
+	link=shared,static target-os=windows address-model=64 install
 popd
 mkdir -p $RPM_BUILD_ROOT%{mingw64_bindir}
 mv $RPM_BUILD_ROOT%{mingw64_libdir}/*.dll $RPM_BUILD_ROOT%{mingw64_bindir}
@@ -287,6 +277,10 @@ mv $RPM_BUILD_ROOT%{mingw64_libdir}/*.dll $RPM_BUILD_ROOT%{mingw64_bindir}
 %{mingw32_bindir}/libboost_serialization-mt.dll
 %{mingw32_bindir}/libboost_signals.dll
 %{mingw32_bindir}/libboost_signals-mt.dll
+%{mingw32_bindir}/libboost_stacktrace_basic.dll
+%{mingw32_bindir}/libboost_stacktrace_basic-mt.dll
+%{mingw32_bindir}/libboost_stacktrace_noop.dll
+%{mingw32_bindir}/libboost_stacktrace_noop-mt.dll
 %{mingw32_bindir}/libboost_system.dll
 %{mingw32_bindir}/libboost_system-mt.dll
 %{mingw32_bindir}/libboost_thread-mt.dll
@@ -344,6 +338,10 @@ mv $RPM_BUILD_ROOT%{mingw64_libdir}/*.dll $RPM_BUILD_ROOT%{mingw64_bindir}
 %{mingw32_libdir}/libboost_serialization-mt.dll.a
 %{mingw32_libdir}/libboost_signals.dll.a
 %{mingw32_libdir}/libboost_signals-mt.dll.a
+%{mingw32_libdir}/libboost_stacktrace_basic.dll.a
+%{mingw32_libdir}/libboost_stacktrace_basic-mt.dll.a
+%{mingw32_libdir}/libboost_stacktrace_noop.dll.a
+%{mingw32_libdir}/libboost_stacktrace_noop-mt.dll.a
 %{mingw32_libdir}/libboost_system.dll.a
 %{mingw32_libdir}/libboost_system-mt.dll.a
 %{mingw32_libdir}/libboost_thread-mt.dll.a
@@ -403,6 +401,10 @@ mv $RPM_BUILD_ROOT%{mingw64_libdir}/*.dll $RPM_BUILD_ROOT%{mingw64_bindir}
 %{mingw32_libdir}/libboost_serialization-mt.a
 %{mingw32_libdir}/libboost_signals.a
 %{mingw32_libdir}/libboost_signals-mt.a
+%{mingw32_libdir}/libboost_stacktrace_basic.a
+%{mingw32_libdir}/libboost_stacktrace_basic-mt.a
+%{mingw32_libdir}/libboost_stacktrace_noop.a
+%{mingw32_libdir}/libboost_stacktrace_noop-mt.a
 %{mingw32_libdir}/libboost_system.a
 %{mingw32_libdir}/libboost_system-mt.a
 %{mingw32_libdir}/libboost_thread-mt.a
@@ -470,6 +472,10 @@ mv $RPM_BUILD_ROOT%{mingw64_libdir}/*.dll $RPM_BUILD_ROOT%{mingw64_bindir}
 %{mingw64_bindir}/libboost_serialization-mt.dll
 %{mingw64_bindir}/libboost_signals.dll
 %{mingw64_bindir}/libboost_signals-mt.dll
+%{mingw64_bindir}/libboost_stacktrace_basic.dll
+%{mingw64_bindir}/libboost_stacktrace_basic-mt.dll
+%{mingw64_bindir}/libboost_stacktrace_noop.dll
+%{mingw64_bindir}/libboost_stacktrace_noop-mt.dll
 %{mingw64_bindir}/libboost_system.dll
 %{mingw64_bindir}/libboost_system-mt.dll
 %{mingw64_bindir}/libboost_thread-mt.dll
@@ -527,6 +533,10 @@ mv $RPM_BUILD_ROOT%{mingw64_libdir}/*.dll $RPM_BUILD_ROOT%{mingw64_bindir}
 %{mingw64_libdir}/libboost_serialization-mt.dll.a
 %{mingw64_libdir}/libboost_signals.dll.a
 %{mingw64_libdir}/libboost_signals-mt.dll.a
+%{mingw64_libdir}/libboost_stacktrace_basic.dll.a
+%{mingw64_libdir}/libboost_stacktrace_basic-mt.dll.a
+%{mingw64_libdir}/libboost_stacktrace_noop.dll.a
+%{mingw64_libdir}/libboost_stacktrace_noop-mt.dll.a
 %{mingw64_libdir}/libboost_system.dll.a
 %{mingw64_libdir}/libboost_system-mt.dll.a
 %{mingw64_libdir}/libboost_thread-mt.dll.a
@@ -586,6 +596,10 @@ mv $RPM_BUILD_ROOT%{mingw64_libdir}/*.dll $RPM_BUILD_ROOT%{mingw64_bindir}
 %{mingw64_libdir}/libboost_serialization-mt.a
 %{mingw64_libdir}/libboost_signals.a
 %{mingw64_libdir}/libboost_signals-mt.a
+%{mingw64_libdir}/libboost_stacktrace_basic.a
+%{mingw64_libdir}/libboost_stacktrace_basic-mt.a
+%{mingw64_libdir}/libboost_stacktrace_noop.a
+%{mingw64_libdir}/libboost_stacktrace_noop-mt.a
 %{mingw64_libdir}/libboost_system.a
 %{mingw64_libdir}/libboost_system-mt.a
 %{mingw64_libdir}/libboost_thread-mt.a
@@ -605,6 +619,9 @@ mv $RPM_BUILD_ROOT%{mingw64_libdir}/*.dll $RPM_BUILD_ROOT%{mingw64_bindir}
 %{mingw64_libdir}/libboost_test_exec_monitor.a
 
 %changelog
+* Tue Mar 20 2018 Thomas Sailer <t.sailer@alumni.ethz.ch> - 1.66.0-1
+- update to 1.66.0
+
 * Thu Feb 08 2018 Fedora Release Engineering <releng@fedoraproject.org> - 1.64.0-2
 - Rebuilt for https://fedoraproject.org/wiki/Fedora_28_Mass_Rebuild
 

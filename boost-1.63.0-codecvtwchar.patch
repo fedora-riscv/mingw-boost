@@ -12,15 +12,15 @@ diff --git a/libs/serialization/build/Jamfile.v2 b/libs/serialization/build/Jamf
 index 8fd92e6..cb17dd5 100644
 --- a/libs/serialization/build/Jamfile.v2
 +++ b/libs/serialization/build/Jamfile.v2
-@@ -80,7 +80,6 @@ SOURCES =
+@@ -80,7 +80,6 @@
      xml_iarchive
      xml_oarchive
      xml_archive_exception
 -    codecvt_null
      utf8_codecvt_facet
-     singleton
- ;
-@@ -93,6 +92,7 @@ WSOURCES =
+  ;
+     
+@@ -92,6 +91,7 @@
      xml_wgrammar
      xml_wiarchive
      xml_woarchive

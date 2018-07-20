@@ -64,6 +64,7 @@ Patch1002:      boost-1.63.0-codecvtwchar.patch
 BuildArch:      noarch
 
 BuildRequires:  file
+BuildRequires:  gcc
 BuildRequires:  mingw32-filesystem >= 95
 BuildRequires:  mingw32-gcc
 BuildRequires:  mingw32-gcc-c++
@@ -619,8 +620,9 @@ mv $RPM_BUILD_ROOT%{mingw64_libdir}/*.dll $RPM_BUILD_ROOT%{mingw64_bindir}
 %{mingw64_libdir}/libboost_test_exec_monitor.a
 
 %changelog
-* Fri Jul 13 2018 Fedora Release Engineering <releng@fedoraproject.org> - 1.66.0-2
-- Rebuilt for https://fedoraproject.org/wiki/Fedora_29_Mass_Rebuild
+* Fri Jul 20 2018 Thomas Sailer <t.sailer@alumni.ethz.ch> - 1.66.0-2
+- rebuilt
+- add gcc BR
 
 * Tue Mar 20 2018 Thomas Sailer <t.sailer@alumni.ethz.ch> - 1.66.0-1
 - update to 1.66.0

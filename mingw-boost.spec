@@ -10,7 +10,6 @@ Summary:        MinGW Windows port of Boost C++ Libraries
 %global toplev_dirname %{name1}_%{version_enc}
 
 License:        Boost
-Group:          Development/Libraries
 URL:            http://www.boost.org
 Source0:        http://downloads.sourceforge.net/%{name1}/%{toplev_dirname}.tar.bz2
 

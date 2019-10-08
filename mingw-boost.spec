@@ -4,7 +4,7 @@
 Name:           mingw-%{name1}
 Version:        1.66.0
 %global version_enc 1_66_0
-Release:        4%{?dist}
+Release:        5%{?dist}
 Summary:        MinGW Windows port of Boost C++ Libraries
 
 %global toplev_dirname %{name1}_%{version_enc}
@@ -619,6 +619,9 @@ mv $RPM_BUILD_ROOT%{mingw64_libdir}/*.dll $RPM_BUILD_ROOT%{mingw64_bindir}
 %{mingw64_libdir}/libboost_test_exec_monitor.a
 
 %changelog
+* Tue Oct 08 2019 Sandro Mani <manisandro@gmail.com> - 1.66.0-5
+- Rebuild (Changes/Mingw32GccDwarf2)
+
 * Thu Jul 25 2019 Fedora Release Engineering <releng@fedoraproject.org> - 1.66.0-4
 - Rebuilt for https://fedoraproject.org/wiki/Fedora_31_Mass_Rebuild
 

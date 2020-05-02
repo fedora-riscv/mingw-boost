@@ -298,8 +298,8 @@ mv $RPM_BUILD_ROOT%{mingw64_libdir}/*.dll $RPM_BUILD_ROOT%{mingw64_bindir}
 %{mingw32_libdir}/libboost_container-x32.dll.a
 %{mingw32_libdir}/libboost_container-mt-x32.dll.a
 %{mingw32_libdir}/libboost_context-mt-x32.dll.a
-%{mingw32_bindir}/libboost_contract-x32.dll.a
-%{mingw32_bindir}/libboost_contract-mt-x32.dll.a
+%{mingw32_libdir}/libboost_contract-x32.dll.a
+%{mingw32_libdir}/libboost_contract-mt-x32.dll.a
 %{mingw32_libdir}/libboost_coroutine-x32.dll.a
 %{mingw32_libdir}/libboost_coroutine-mt-x32.dll.a
 %{mingw32_libdir}/libboost_date_time-x32.dll.a
@@ -361,8 +361,8 @@ mv $RPM_BUILD_ROOT%{mingw64_libdir}/*.dll $RPM_BUILD_ROOT%{mingw64_bindir}
 %{mingw32_libdir}/libboost_container-x32.a
 %{mingw32_libdir}/libboost_container-mt-x32.a
 %{mingw32_libdir}/libboost_context-mt-x32.a
-%{mingw32_bindir}/libboost_contract-x32.a
-%{mingw32_bindir}/libboost_contract-mt-x32.a
+%{mingw32_libdir}/libboost_contract-x32.a
+%{mingw32_libdir}/libboost_contract-mt-x32.a
 %{mingw32_libdir}/libboost_coroutine-x32.a
 %{mingw32_libdir}/libboost_coroutine-mt-x32.a
 %{mingw32_libdir}/libboost_date_time-x32.a
@@ -493,8 +493,8 @@ mv $RPM_BUILD_ROOT%{mingw64_libdir}/*.dll $RPM_BUILD_ROOT%{mingw64_bindir}
 %{mingw64_libdir}/libboost_container-x64.dll.a
 %{mingw64_libdir}/libboost_container-mt-x64.dll.a
 %{mingw64_libdir}/libboost_context-mt-x64.dll.a
-%{mingw64_bindir}/libboost_contract-x64.dll.a
-%{mingw64_bindir}/libboost_contract-mt-x64.dll.a
+%{mingw64_libdir}/libboost_contract-x64.dll.a
+%{mingw64_libdir}/libboost_contract-mt-x64.dll.a
 %{mingw64_libdir}/libboost_coroutine-x64.dll.a
 %{mingw64_libdir}/libboost_coroutine-mt-x64.dll.a
 %{mingw64_libdir}/libboost_date_time-x64.dll.a
@@ -556,8 +556,8 @@ mv $RPM_BUILD_ROOT%{mingw64_libdir}/*.dll $RPM_BUILD_ROOT%{mingw64_bindir}
 %{mingw64_libdir}/libboost_container-x64.a
 %{mingw64_libdir}/libboost_container-mt-x64.a
 %{mingw64_libdir}/libboost_context-mt-x64.a
-%{mingw64_bindir}/libboost_contract-x64.a
-%{mingw64_bindir}/libboost_contract-mt-x64.a
+%{mingw64_libdir}/libboost_contract-x64.a
+%{mingw64_libdir}/libboost_contract-mt-x64.a
 %{mingw64_libdir}/libboost_coroutine-x64.a
 %{mingw64_libdir}/libboost_coroutine-mt-x64.a
 %{mingw64_libdir}/libboost_date_time-x64.a

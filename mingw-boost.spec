@@ -3,7 +3,7 @@
 %global name1 boost
 Name:           mingw-%{name1}
 Version:        1.73.0
-Release:        1%{?dist}
+Release:        2%{?dist}
 Summary:        MinGW Windows port of Boost C++ Libraries
 
 # Replace each . with _ in %%{version}
@@ -183,7 +183,7 @@ cp -r win32 win64
 %if 0%{?mingw_build_win32} == 1
 pushd win32
 export MINGW32_CXXFLAGS="$MINGW32_CXXFLAGS %{mingw32_cflags}"
-export MINGW32_LDFLAGS="$MINGW32_LDFLAGS -lssp"
+export MINGW32_LDFLAGS="$MINGW32_LDFLAGS %{mingw32_ldflags}"
 cat >> ./tools/build/src/user-config.jam << "EOF"
 import os ;
 local MINGW32_CXXFLAGS = [ os.environ MINGW32_CXXFLAGS ] ;
@@ -203,8 +203,8 @@ popd
 %endif
 %if 0%{?mingw_build_win64} == 1
 pushd win64
-export MINGW64_CXXFLAGS="$MINGW64_CXXFLAGS %{mingw32_cflags}"
-export MINGW64_LDFLAGS="$MINGW64_LDFLAGS -lssp"
+export MINGW64_CXXFLAGS="$MINGW64_CXXFLAGS %{mingw64_cflags}"
+export MINGW64_LDFLAGS="$MINGW64_LDFLAGS %{mingw64_ldflags}"
 cat >> ./tools/build/src/user-config.jam << "EOF"
 import os ;
 local MINGW64_CXXFLAGS = [ os.environ MINGW64_CXXFLAGS ] ;
@@ -668,6 +668,9 @@ rm -rf $RPM_BUILD_ROOT%{mingw64_libdir}/cmake
 %{mingw64_libdir}/libboost_test_exec_monitor-mt-x64.a
 
 %changelog
+* Tue Aug 04 2020 Thomas Sailer <t.sailer@alumni.ethz.ch> - 1.73.0-2
+- fix compile flags typo
+
 * Tue Aug 04 2020 Thomas Sailer <t.sailer@alumni.ethz.ch> - 1.73.0-1
 - update to 1.73.0
 

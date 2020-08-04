@@ -1,6 +1,6 @@
---- libs/context/build/Jamfile.v2.orig	2013-03-03 13:39:59.684868916 +0100
-+++ libs/context/build/Jamfile.v2	2013-03-03 15:09:09.893232829 +0100
-@@ -47,10 +47,11 @@
+--- libs/context/build/Jamfile.v2.mingw	2020-04-22 15:34:56.000000000 +0200
++++ libs/context/build/Jamfile.v2	2020-08-04 01:27:43.304736302 +0200
+@@ -52,10 +52,11 @@
  local rule default_binary_format ( )
  {
      local tmp = elf ;
@@ -16,19 +16,108 @@
      return $(tmp) ;
  }
  
-@@ -67,10 +68,11 @@
+@@ -72,11 +73,12 @@
  local rule default_abi ( )
  {
      local tmp = sysv ;
 -    if [ os.name ] = "NT" { tmp = ms ; }
 -    else if [ os.name ] = "CYGWIN" { tmp = ms ; }
 -    else if [ os.platform ] = "ARM" { tmp = aapcs ; }
--    else if [ os.platform ] = "MIPS" { tmp = o32 ; }
+-    else if [ os.platform ] = "MIPS32" { tmp = o32 ; }
+-    else if [ os.platform ] = "MIPS64" { tmp = n64 ; }
 +    #if [ os.name ] = "NT" { tmp = ms ; }
 +    #else if [ os.name ] = "CYGWIN" { tmp = ms ; }
 +    #else if [ os.platform ] = "ARM" { tmp = aapcs ; }
-+    #else if [ os.platform ] = "MIPS" { tmp = o32 ; }
++    #else if [ os.platform ] = "MIPS32" { tmp = o32 ; }
++    #else if [ os.platform ] = "MIPS64" { tmp = n64 ; }
 +    tmp = ms ;
      return $(tmp) ;
  }
  
+--- boost/config/compiler/gcc.hpp.mingw	2020-08-04 03:04:58.992696345 +0200
++++ boost/config/compiler/gcc.hpp	2020-08-04 03:05:26.536823453 +0200
+@@ -315,13 +315,6 @@
+ #  define BOOST_FALLTHROUGH __attribute__((fallthrough))
+ #endif
+ 
+-#if defined(__MINGW32__) && !defined(__MINGW64__)
+-// Currently (March 2019) thread_local is broken on mingw for all current 32bit compiler releases, see
+-// https://sourceforge.net/p/mingw-w64/bugs/527/
+-// Not setting this causes program termination on thread exit.
+-#define BOOST_NO_CXX11_THREAD_LOCAL
+-#endif
+-
+ //
+ // Unused attribute:
+ #if __GNUC__ >= 4
+--- libs/locale/build/Jamfile.v2.mingw	2020-08-04 12:10:05.495508094 +0200
++++ libs/locale/build/Jamfile.v2	2020-08-04 12:15:34.037385187 +0200
+@@ -26,8 +26,7 @@
+ 
+ ## iconv
+ 
+-obj has_iconv_libc_obj : ../build/has_iconv.cpp ;
+-exe has_iconv : has_iconv_libc_obj ;
++obj has_iconv : ../build/has_iconv.cpp ;
+ explicit has_iconv ;
+ 
+ ICONV_PATH = [ modules.peek : ICONV_PATH ] ;
+@@ -41,8 +40,7 @@
+ 
+ explicit iconv ;
+ 
+-obj has_iconv_libc_ext : ../build/has_iconv.cpp iconv ;
+-exe has_external_iconv : has_iconv_libc_ext iconv ;
++obj has_external_iconv : ../build/has_iconv.cpp iconv ;
+ explicit has_external_iconv ;
+ 
+ exe accepts_shared_option   : ../build/option.cpp 
+@@ -189,11 +187,8 @@
+     
+ }
+ 
+-obj has_icu_obj     : ../build/has_icu_test.cpp : $(ICU_OPTS)   ;
+-obj has_icu64_obj   : ../build/has_icu_test.cpp : $(ICU64_OPTS) ;
+-
+-exe has_icu   : has_icu_obj   : $(ICU_OPTS)   ;
+-exe has_icu64 : has_icu64_obj : $(ICU64_OPTS) ;
++obj has_icu     : ../build/has_icu_test.cpp : $(ICU_OPTS)   ;
++obj has_icu64   : ../build/has_icu_test.cpp : $(ICU64_OPTS) ;
+ 
+ explicit has_icu has_icu64 ;
+ 
+--- libs/regex/build/Jamfile.v2.mingw	2020-08-04 12:08:39.821198522 +0200
++++ libs/regex/build/Jamfile.v2	2020-08-04 12:12:43.679690400 +0200
+@@ -116,7 +116,7 @@
+ 
+ }
+ 
+-unit-test has_icu : has_icu_test.cpp : $(ICU_OPTS) ;
++obj has_icu : has_icu_test.cpp : $(ICU_OPTS) ;
+ explicit has_icu ;
+ 
+ alias icu_options : : : : [ check-target-builds has_icu : $(ICU_OPTS) : ] ;
+--- libs/context/src/asm/jump_i386_ms_pe_gas.asm.mingw	2020-08-04 13:10:32.710118240 +0200
++++ libs/context/src/asm/jump_i386_ms_pe_gas.asm	2020-08-04 13:23:04.203835474 +0200
+@@ -120,4 +120,4 @@
+     jmp *%ecx
+ 
+ .section .drectve
+-.ascii " -export:\"_jump_fcontext\""
++.ascii " -export:\"jump_fcontext\""
+--- libs/context/src/asm/make_i386_ms_pe_gas.asm.mingw	2020-08-04 13:10:40.623872908 +0200
++++ libs/context/src/asm/make_i386_ms_pe_gas.asm	2020-08-04 13:23:23.601234437 +0200
+@@ -150,4 +150,4 @@
+ .def	__exit;	.scl	2;	.type	32;	.endef  /* standard C library function */
+ 
+ .section .drectve
+-.ascii " -export:\"_make_fcontext\""
++.ascii " -export:\"make_fcontext\""
+--- libs/context/src/asm/ontop_i386_ms_pe_gas.asm.mingw	2020-08-04 13:10:49.210606716 +0200
++++ libs/context/src/asm/ontop_i386_ms_pe_gas.asm	2020-08-04 13:23:49.368436027 +0200
+@@ -128,4 +128,4 @@
+     jmp  *%ecx
+ 
+ .section .drectve
+-.ascii " -export:\"_ontop_fcontext\""
++.ascii " -export:\"ontop_fcontext\""

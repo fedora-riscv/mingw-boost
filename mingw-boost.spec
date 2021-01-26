@@ -2,8 +2,8 @@
 
 %global name1 boost
 Name:           mingw-%{name1}
-Version:        1.73.0
-Release:        2%{?dist}
+Version:        1.75.0
+Release:        1%{?dist}
 Summary:        MinGW Windows port of Boost C++ Libraries
 
 # Replace each . with _ in %%{version}
@@ -18,9 +18,6 @@ License:        Boost
 URL:            http://www.boost.org
 Source0:        https://sourceforge.net/projects/%%{name1}/files/%{name1}/%{version}/%{toplev_dirname}.tar.bz2
 
-# https://svn.boost.org/trac/boost/ticket/6150
-Patch4:         boost-1.50.0-fix-non-utf8-files.patch
-
 # https://bugzilla.redhat.com/show_bug.cgi?id=828856
 # https://bugzilla.redhat.com/show_bug.cgi?id=828857
 # https://svn.boost.org/trac/boost/ticket/6701
@@ -29,36 +26,25 @@ Patch15:        boost-1.58.0-pool.patch
 # https://svn.boost.org/trac/boost/ticket/9038
 Patch51:        boost-1.58.0-pool-test_linking.patch
 
-# https://bugzilla.redhat.com/show_bug.cgi?id=1190039
-Patch65:        boost-1.73.0-build-optflags.patch
+# https://bugzilla.redhat.com/show_bug.cgi?id=1541035
+Patch96:        boost-1.75.0-build-optflags.patch
 
 # https://bugzilla.redhat.com/show_bug.cgi?id=1318383
-Patch82:        boost-1.66.0-no-rpath.patch
+Patch97:        boost-1.75.0-no-rpath.patch
 
 # https://bugzilla.redhat.com/show_bug.cgi?id=1541035
 Patch83:        boost-1.73.0-b2-build-flags.patch
 
-# https://bugzilla.redhat.com/show_bug.cgi?id=1818723
-Patch86:        boost-1.69-format-allocator.patch
-
-# https://bugzilla.redhat.com/show_bug.cgi?id=1832639
-Patch87:        boost-1.69.0-test-cxx20.patch
-
 # https://lists.boost.org/Archives/boost/2020/04/248812.php
 Patch88:        boost-1.73.0-cmakedir.patch
 
-# https://github.com/ned14/outcome/issues/223
-Patch89:        boost-1.73.0-outcome-assert.patch
+# https://bugzilla.redhat.com/show_bug.cgi?id=1896382
+# https://github.com/boostorg/python/issues/325
+Patch93:        boost-1.73-python3.10.patch
 
-# https://github.com/boostorg/beast/pull/1927
-Patch90:        boost-1.73.0-beast-coroutines.patch
-
-# https://github.com/boostorg/geometry/issues/721
-Patch91:        boost-1.73-geometry-issue721.patch
-
-# https://bugzilla.redhat.com/show_bug.cgi?id=1843105
-# https://github.com/boostorg/mpi/pull/119
-Patch92:        boost-1.73-mpi-vector-data.patch
+# https://bugzilla.redhat.com/show_bug.cgi?id=1899888
+# https://github.com/boostorg/locale/issues/52
+Patch94:        boost-1.73-locale-empty-vector.patch
 
 # https://svn.boost.org/trac/boost/ticket/7262
 Patch1000:      boost-mingw.patch
@@ -159,19 +145,14 @@ mv %{toplev_dirname} win32
 pushd win32
 find ./boost -name '*.hpp' -perm /111 | xargs chmod a-x
 
-%patch4 -p1
 %patch15 -p0
 %patch51 -p1
-%patch65 -p1
-%patch82 -p1
+%patch96 -p1
+%patch97 -p1
 %patch83 -p1
-%patch86 -p1
-%patch87 -p2
 %patch88 -p1
-%patch89 -p1
-%patch90 -p1
-%patch91 -p1
-%patch92 -p1
+%patch93 -p1
+%patch94 -p1
 
 %patch1000 -p0 -b .mingw
 %patch1002 -p1 -b .codecvtwchar
@@ -276,6 +257,8 @@ rm -rf $RPM_BUILD_ROOT%{mingw64_libdir}/cmake
 %{mingw32_bindir}/libboost_graph-mt-x32.dll
 %{mingw32_bindir}/libboost_iostreams-x32.dll
 %{mingw32_bindir}/libboost_iostreams-mt-x32.dll
+%{mingw32_bindir}/libboost_json-x32.dll
+%{mingw32_bindir}/libboost_json-mt-x32.dll
 %{mingw32_bindir}/libboost_locale-mt-x32.dll
 %{mingw32_bindir}/libboost_log-x32.dll
 %{mingw32_bindir}/libboost_log-mt-x32.dll
@@ -341,6 +324,8 @@ rm -rf $RPM_BUILD_ROOT%{mingw64_libdir}/cmake
 %{mingw32_libdir}/libboost_graph-mt-x32.dll.a
 %{mingw32_libdir}/libboost_iostreams-x32.dll.a
 %{mingw32_libdir}/libboost_iostreams-mt-x32.dll.a
+%{mingw32_libdir}/libboost_json-x32.dll.a
+%{mingw32_libdir}/libboost_json-mt-x32.dll.a
 %{mingw32_libdir}/libboost_locale-mt-x32.dll.a
 %{mingw32_libdir}/libboost_log-x32.dll.a
 %{mingw32_libdir}/libboost_log-mt-x32.dll.a
@@ -408,6 +393,8 @@ rm -rf $RPM_BUILD_ROOT%{mingw64_libdir}/cmake
 %{mingw32_libdir}/libboost_graph-mt-x32.a
 %{mingw32_libdir}/libboost_iostreams-x32.a
 %{mingw32_libdir}/libboost_iostreams-mt-x32.a
+%{mingw32_libdir}/libboost_json-x32.a
+%{mingw32_libdir}/libboost_json-mt-x32.a
 %{mingw32_libdir}/libboost_locale-mt-x32.a
 %{mingw32_libdir}/libboost_log-x32.a
 %{mingw32_libdir}/libboost_log-mt-x32.a
@@ -483,6 +470,8 @@ rm -rf $RPM_BUILD_ROOT%{mingw64_libdir}/cmake
 %{mingw64_bindir}/libboost_graph-mt-x64.dll
 %{mingw64_bindir}/libboost_iostreams-x64.dll
 %{mingw64_bindir}/libboost_iostreams-mt-x64.dll
+%{mingw64_bindir}/libboost_json-x64.dll
+%{mingw64_bindir}/libboost_json-mt-x64.dll
 %{mingw64_bindir}/libboost_locale-mt-x64.dll
 %{mingw64_bindir}/libboost_log-x64.dll
 %{mingw64_bindir}/libboost_log-mt-x64.dll
@@ -548,6 +537,8 @@ rm -rf $RPM_BUILD_ROOT%{mingw64_libdir}/cmake
 %{mingw64_libdir}/libboost_graph-mt-x64.dll.a
 %{mingw64_libdir}/libboost_iostreams-x64.dll.a
 %{mingw64_libdir}/libboost_iostreams-mt-x64.dll.a
+%{mingw64_libdir}/libboost_json-x64.dll.a
+%{mingw64_libdir}/libboost_json-mt-x64.dll.a
 %{mingw64_libdir}/libboost_locale-mt-x64.dll.a
 %{mingw64_libdir}/libboost_log-x64.dll.a
 %{mingw64_libdir}/libboost_log-mt-x64.dll.a
@@ -615,6 +606,8 @@ rm -rf $RPM_BUILD_ROOT%{mingw64_libdir}/cmake
 %{mingw64_libdir}/libboost_graph-mt-x64.a
 %{mingw64_libdir}/libboost_iostreams-x64.a
 %{mingw64_libdir}/libboost_iostreams-mt-x64.a
+%{mingw64_libdir}/libboost_json-x64.a
+%{mingw64_libdir}/libboost_json-mt-x64.a
 %{mingw64_libdir}/libboost_locale-mt-x64.a
 %{mingw64_libdir}/libboost_log-x64.a
 %{mingw64_libdir}/libboost_log-mt-x64.a
@@ -668,6 +661,9 @@ rm -rf $RPM_BUILD_ROOT%{mingw64_libdir}/cmake
 %{mingw64_libdir}/libboost_test_exec_monitor-mt-x64.a
 
 %changelog
+* Tue Jan 26 2021 Thomas Sailer <t.sailer@alumni.ethz.ch> - 1.75.0-1
+- update to 1.75.0
+
 * Tue Aug 04 2020 Thomas Sailer <t.sailer@alumni.ethz.ch> - 1.73.0-2
 - fix compile flags typo
 

@@ -92,7 +92,7 @@
  
  }
  
--unit-test has_icu : has_icu_test.cpp : $(ICU_OPTS) ;
+-exe has_icu : has_icu_test.cpp : $(ICU_OPTS) ;
 +obj has_icu : has_icu_test.cpp : $(ICU_OPTS) ;
  explicit has_icu ;
  

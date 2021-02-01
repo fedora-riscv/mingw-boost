@@ -68,7 +68,7 @@ BuildRequires:  mingw32-pthreads
 BuildRequires:  mingw32-icu
 #BuildRequires:  mingw32-win-iconv
 
-BuildRequires:  mingw64-filesystem >= 95
+BuildRequires:  mingw64-filesystem >= 117
 BuildRequires:  mingw64-gcc
 BuildRequires:  mingw64-gcc-c++
 BuildRequires:  mingw64-binutils

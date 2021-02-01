@@ -5,7 +5,7 @@
 %global name1 boost
 Name:           mingw-%{name1}
 Version:        1.75.0
-Release:        1%{?dist}
+Release:        2%{?dist}
 Summary:        MinGW Windows port of Boost C++ Libraries
 
 # Replace each . with _ in %%{version}

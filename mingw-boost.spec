@@ -1,7 +1,5 @@
 %?mingw_package_header
 
-%global __requires_exclude api-ms-win-core-synch-l1-2-0.dll
-
 %global name1 boost
 Name:           mingw-%{name1}
 Version:        1.75.0
@@ -15,6 +13,8 @@ Summary:        MinGW Windows port of Boost C++ Libraries
   print(ver)
 }
 %global toplev_dirname %{name1}_%{version_enc}
+
+%global __provides_exclude %{?__provides_exclude:%__provides_exclude|}^mingw(32|64)\\(api-ms-.*dll\\)$
 
 License:        Boost
 URL:            http://www.boost.org
@@ -663,6 +663,9 @@ rm -rf $RPM_BUILD_ROOT%{mingw64_libdir}/cmake
 %{mingw64_libdir}/libboost_test_exec_monitor-mt-x64.a
 
 %changelog
+* Mon Feb 01 2021 Thomas Sailer <t.sailer@alumni.ethz.ch> - 1.75.0-3
+- rework requires filtering
+
 * Mon Feb 01 2021 Thomas Sailer <t.sailer@alumni.ethz.ch> - 1.75.0-2
 - filter out virtual DLL name from requires
 

@@ -14,7 +14,7 @@ Summary:        MinGW Windows port of Boost C++ Libraries
 }
 %global toplev_dirname %{name1}_%{version_enc}
 
-%global __provides_exclude %{?__provides_exclude:%__provides_exclude|}^mingw(32|64)\\(api-ms-.*dll\\)$
+%global __requires_exclude %{?__requires_exclude:%__requires_exclude|}^mingw(32|64)\\(api-ms-.*dll\\)$
 
 License:        Boost
 URL:            http://www.boost.org

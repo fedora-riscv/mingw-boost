@@ -14,8 +14,6 @@ Summary:        MinGW Windows port of Boost C++ Libraries
 }
 %global toplev_dirname %{name1}_%{version_enc}
 
-%global __requires_exclude %{?__requires_exclude:%__requires_exclude|}^mingw(32|64)\\(api-ms-.*dll\\)$
-
 License:        Boost
 URL:            http://www.boost.org
 Source0:        https://sourceforge.net/projects/%%{name1}/files/%{name1}/%{version}/%{toplev_dirname}.tar.bz2
@@ -59,7 +57,7 @@ BuildArch:      noarch
 BuildRequires:  file
 BuildRequires:  gcc
 BuildRequires:  gcc-c++
-BuildRequires:  mingw32-filesystem >= 95
+BuildRequires:  mingw32-filesystem >= 117
 BuildRequires:  mingw32-gcc
 BuildRequires:  mingw32-gcc-c++
 BuildRequires:  mingw32-binutils
@@ -664,7 +662,7 @@ rm -rf $RPM_BUILD_ROOT%{mingw64_libdir}/cmake
 
 %changelog
 * Mon Feb 01 2021 Thomas Sailer <t.sailer@alumni.ethz.ch> - 1.75.0-3
-- rework requires filtering
+- drop requires filtering, require mingw-filesystem >= 117
 
 * Mon Feb 01 2021 Thomas Sailer <t.sailer@alumni.ethz.ch> - 1.75.0-2
 - filter out virtual DLL name from requires

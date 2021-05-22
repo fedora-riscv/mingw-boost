@@ -3,7 +3,7 @@
 %global name1 boost
 Name:           mingw-%{name1}
 Version:        1.75.0
-Release:        3%{?dist}
+Release:        4%{?dist}
 Summary:        MinGW Windows port of Boost C++ Libraries
 
 # Replace each . with _ in %%{version}
@@ -661,6 +661,9 @@ rm -rf $RPM_BUILD_ROOT%{mingw64_libdir}/cmake
 %{mingw64_libdir}/libboost_test_exec_monitor-mt-x64.a
 
 %changelog
+* Sat May 22 2021 Sandro Mani <manisandro@gmail.com> - 1.75.0-4
+- Rebuild (icu)
+
 * Mon Feb 01 2021 Thomas Sailer <t.sailer@alumni.ethz.ch> - 1.75.0-3
 - drop requires filtering, require mingw-filesystem >= 117
 

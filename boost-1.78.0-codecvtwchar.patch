@@ -9,21 +9,21 @@ See https://svn.boost.org/trac/boost/ticket/12205
  1 file changed, 1 insertion(+), 1 deletion(-)
 
 diff --git a/libs/serialization/build/Jamfile.v2 b/libs/serialization/build/Jamfile.v2
---- a/libs/serialization/build/Jamfile.v2
-+++ b/libs/serialization/build/Jamfile.v2
-@@ -86,7 +86,6 @@
+--- libs/serialization/build/Jamfile.v2.codecvtwchar	2022-08-02 16:25:38.251424867 +0200
++++ libs/serialization/build/Jamfile.v2	2022-08-02 16:27:27.430061839 +0200
+@@ -85,7 +85,6 @@
+     xml_grammar
      xml_iarchive
-     xml_oarchive
      xml_archive_exception
 -    codecvt_null
-     utf8_codecvt_facet
   ;
-     
-@@ -102,6 +101,7 @@
+ 
+ SOURCES_HAS_STD_LOCALE = 
+@@ -105,6 +104,7 @@
      xml_woarchive
      polymorphic_xml_wiarchive
      polymorphic_xml_woarchive
 +    codecvt_null
  ;
  
- lib boost_serialization 
+ rule has-config-flag ( flag : properties * )

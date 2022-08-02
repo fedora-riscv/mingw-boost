@@ -68,7 +68,7 @@ Patch110:       boost-1.76.0-enum_type_object-type-python-3.11.patch
 Patch1000:      boost-mingw.patch
 
 # https://github.com/boostorg/serialization/pull/42
-Patch1002:      boost-1.63.0-codecvtwchar.patch
+Patch1002:      boost-1.78.0-codecvtwchar.patch
 
 BuildArch:      noarch
 

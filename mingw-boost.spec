@@ -2,8 +2,8 @@
 
 %global name1 boost
 Name:           mingw-%{name1}
-Version:        1.75.0
-Release:        8%{?dist}
+Version:        1.78.0
+Release:        1%{?dist}
 Summary:        MinGW Windows port of Boost C++ Libraries
 
 # Replace each . with _ in %%{version}
@@ -27,24 +27,42 @@ Patch15:        boost-1.58.0-pool.patch
 Patch51:        boost-1.58.0-pool-test_linking.patch
 
 # https://bugzilla.redhat.com/show_bug.cgi?id=1541035
-Patch96:        boost-1.75.0-build-optflags.patch
+Patch105:       boost-1.78.0-build-optflags.patch
 
 # https://bugzilla.redhat.com/show_bug.cgi?id=1318383
-Patch97:        boost-1.75.0-no-rpath.patch
-
-# https://bugzilla.redhat.com/show_bug.cgi?id=1541035
-Patch83:        boost-1.73.0-b2-build-flags.patch
+Patch106:       boost-1.78.0-no-rpath.patch
 
 # https://lists.boost.org/Archives/boost/2020/04/248812.php
 Patch88:        boost-1.73.0-cmakedir.patch
 
-# https://bugzilla.redhat.com/show_bug.cgi?id=1896382
-# https://github.com/boostorg/python/issues/325
-Patch93:        boost-1.73-python3.10.patch
-
 # https://bugzilla.redhat.com/show_bug.cgi?id=1899888
 # https://github.com/boostorg/locale/issues/52
 Patch94:        boost-1.73-locale-empty-vector.patch
+
+# https://bugzilla.redhat.com/show_bug.cgi?id=1541035
+Patch107:       boost-1.78.0-b2-build-flags.patch
+
+# https://github.com/boostorg/random/issues/82
+Patch102:       boost-1.76.0-random-test.patch
+
+# PR https://github.com/boostorg/multiprecision/pull/421
+# fixes ppc64le issue https://github.com/boostorg/multiprecision/issues/419
+Patch103:       boost-1.76.0-fix_multiprecision_issue_419-ppc64le.patch
+
+# PR https://github.com/boostorg/interval/pull/30
+# Fixes narrowing conversions for ppc -
+#   https://github.com/boostorg/interval/issues/29
+Patch104:       boost-1.76.0-fix-narrowing-conversions-for-ppc.patch 
+
+# https://github.com/boostorg/ptr_container/pull/27
+Patch108:       boost-1.76.0-ptr_cont-xml.patch
+
+# Fixes missing libboost_fiber.so
+#  https://github.com/boostorg/boost/issues/632
+Patch109:       boost-1.78.0-fix-b2-staging.patch
+
+# https://github.com/boostorg/python/pull/385
+Patch110:       boost-1.76.0-enum_type_object-type-python-3.11.patch
 
 # https://svn.boost.org/trac/boost/ticket/7262
 Patch1000:      boost-mingw.patch
@@ -147,12 +165,17 @@ find ./boost -name '*.hpp' -perm /111 | xargs chmod a-x
 
 %patch15 -p0
 %patch51 -p1
-%patch96 -p1
-%patch97 -p1
-%patch83 -p1
+%patch105 -p1
+%patch106 -p1
+%patch107 -p1
 %patch88 -p1
-%patch93 -p1
 %patch94 -p1
+%patch102 -p1
+%patch103 -p2
+%patch104 -p2
+%patch108 -p1
+%patch109 -p1
+%patch110 -p1
 
 %patch1000 -p0 -b .mingw
 %patch1002 -p1 -b .codecvtwchar
@@ -661,6 +684,9 @@ rm -rf $RPM_BUILD_ROOT%{mingw64_libdir}/cmake
 %{mingw64_libdir}/libboost_test_exec_monitor-mt-x64.a
 
 %changelog
+* Tue Aug 02 2022 Thomas Sailer <t.sailer@alumni.ethz.ch> - 1.78.0-1
+- Update to 1.78.0
+
 * Thu Jul 21 2022 Fedora Release Engineering <releng@fedoraproject.org> - 1.75.0-8
 - Rebuilt for https://fedoraproject.org/wiki/Fedora_37_Mass_Rebuild
 

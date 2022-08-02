@@ -97,27 +97,3 @@
  explicit has_icu ;
  
  alias icu_options : : : : [ check-target-builds has_icu : $(ICU_OPTS) : ] ;
---- libs/context/src/asm/jump_i386_ms_pe_gas.asm.mingw	2020-08-04 13:10:32.710118240 +0200
-+++ libs/context/src/asm/jump_i386_ms_pe_gas.asm	2020-08-04 13:23:04.203835474 +0200
-@@ -120,4 +120,4 @@
-     jmp *%ecx
- 
- .section .drectve
--.ascii " -export:\"_jump_fcontext\""
-+.ascii " -export:\"jump_fcontext\""
---- libs/context/src/asm/make_i386_ms_pe_gas.asm.mingw	2020-08-04 13:10:40.623872908 +0200
-+++ libs/context/src/asm/make_i386_ms_pe_gas.asm	2020-08-04 13:23:23.601234437 +0200
-@@ -150,4 +150,4 @@
- .def	__exit;	.scl	2;	.type	32;	.endef  /* standard C library function */
- 
- .section .drectve
--.ascii " -export:\"_make_fcontext\""
-+.ascii " -export:\"make_fcontext\""
---- libs/context/src/asm/ontop_i386_ms_pe_gas.asm.mingw	2020-08-04 13:10:49.210606716 +0200
-+++ libs/context/src/asm/ontop_i386_ms_pe_gas.asm	2020-08-04 13:23:49.368436027 +0200
-@@ -128,4 +128,4 @@
-     jmp  *%ecx
- 
- .section .drectve
--.ascii " -export:\"_ontop_fcontext\""
-+.ascii " -export:\"ontop_fcontext\""

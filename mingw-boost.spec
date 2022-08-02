@@ -82,7 +82,7 @@ BuildRequires:  mingw32-binutils
 BuildRequires:  mingw32-bzip2
 BuildRequires:  mingw32-zlib
 BuildRequires:  mingw32-expat
-BuildRequires:  mingw32-pthreads
+BuildRequires:  mingw32-winpthreads
 BuildRequires:  mingw32-icu
 #BuildRequires:  mingw32-win-iconv
 
@@ -93,7 +93,7 @@ BuildRequires:  mingw64-binutils
 BuildRequires:  mingw64-bzip2
 BuildRequires:  mingw64-zlib
 BuildRequires:  mingw64-expat
-BuildRequires:  mingw64-pthreads
+BuildRequires:  mingw64-winpthreads
 BuildRequires:  mingw64-icu
 #BuildRequires:  mingw64-win-iconv
 

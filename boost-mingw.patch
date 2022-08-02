@@ -1,6 +1,6 @@
---- libs/context/build/Jamfile.v2.mingw	2020-04-22 15:34:56.000000000 +0200
-+++ libs/context/build/Jamfile.v2	2020-08-04 01:27:43.304736302 +0200
-@@ -52,10 +52,11 @@
+--- ./libs/context/build/Jamfile.v2.mingw	2021-12-02 07:47:31.000000000 +0100
++++ ./libs/context/build/Jamfile.v2	2022-08-02 16:15:30.470756432 +0200
+@@ -57,10 +57,11 @@
  local rule default_binary_format ( )
  {
      local tmp = elf ;
@@ -16,7 +16,7 @@
      return $(tmp) ;
  }
  
-@@ -72,11 +73,12 @@
+@@ -77,11 +78,12 @@
  local rule default_abi ( )
  {
      local tmp = sysv ;
@@ -34,24 +34,8 @@
      return $(tmp) ;
  }
  
---- boost/config/compiler/gcc.hpp.mingw	2020-08-04 03:04:58.992696345 +0200
-+++ boost/config/compiler/gcc.hpp	2020-08-04 03:05:26.536823453 +0200
-@@ -315,13 +315,6 @@
- #  define BOOST_FALLTHROUGH __attribute__((fallthrough))
- #endif
- 
--#if defined(__MINGW32__) && !defined(__MINGW64__)
--// Currently (March 2019) thread_local is broken on mingw for all current 32bit compiler releases, see
--// https://sourceforge.net/p/mingw-w64/bugs/527/
--// Not setting this causes program termination on thread exit.
--#define BOOST_NO_CXX11_THREAD_LOCAL
--#endif
--
- //
- // Unused attribute:
- #if __GNUC__ >= 4
---- libs/locale/build/Jamfile.v2.mingw	2020-08-04 12:10:05.495508094 +0200
-+++ libs/locale/build/Jamfile.v2	2020-08-04 12:15:34.037385187 +0200
+--- ./libs/locale/build/Jamfile.v2.mingw	2021-12-02 07:47:33.000000000 +0100
++++ ./libs/locale/build/Jamfile.v2	2022-08-02 16:15:30.470756432 +0200
 @@ -26,8 +26,7 @@
  
  ## iconv
@@ -86,9 +70,9 @@
  
  explicit has_icu has_icu64 ;
  
---- libs/regex/build/Jamfile.v2.mingw	2020-08-04 12:08:39.821198522 +0200
-+++ libs/regex/build/Jamfile.v2	2020-08-04 12:12:43.679690400 +0200
-@@ -116,7 +116,7 @@
+--- ./libs/regex/build/Jamfile.v2.mingw	2022-08-02 16:15:30.471756438 +0200
++++ ./libs/regex/build/Jamfile.v2	2022-08-02 16:21:08.751823306 +0200
+@@ -139,7 +139,7 @@
  
  }
  
@@ -96,4 +80,4 @@
 +obj has_icu : has_icu_test.cpp : $(ICU_OPTS) ;
  explicit has_icu ;
  
- alias icu_options : : : : [ check-target-builds has_icu : $(ICU_OPTS) : ] ;
+ obj is_legacy_03 : is_legacy_03.cpp ;

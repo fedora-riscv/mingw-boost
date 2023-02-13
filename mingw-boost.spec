@@ -3,7 +3,7 @@
 %global name1 boost
 Name:           mingw-%{name1}
 Version:        1.78.0
-Release:        2%{?dist}
+Release:        2.0%{?dist}
 Summary:        MinGW Windows port of Boost C++ Libraries
 
 # Replace each . with _ in %%{version}
@@ -684,6 +684,9 @@ rm -rf $RPM_BUILD_ROOT%{mingw64_libdir}/cmake
 %{mingw64_libdir}/libboost_test_exec_monitor-mt-x64.a
 
 %changelog
+* Tue Feb 14 2023 Liu Yang <Yang.Liu.sn@gmail.com> - 1.78.0-2.0
+- Rebuild with updated dependencies for riscv64.
+
 * Fri Aug 05 2022 Sandro Mani <manisandro@gmail.com> - 1.78.0-2
 - Rebuild (icu)
 
